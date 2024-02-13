@@ -6,11 +6,15 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.MediaController
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.VideoView
 import com.deopraglabs.egrade.R
 import com.deopraglabs.egrade.databinding.ActivityMainBinding
+import com.google.android.material.resources.TextAppearance
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,6 +61,10 @@ class MainActivity : AppCompatActivity() {
                 binding.videoStart.stopPlayback()
                 binding.videoStart.visibility = VideoView.INVISIBLE
                 binding.barStart.visibility = ProgressBar.INVISIBLE
+                binding.imageStart.visibility = ImageView.VISIBLE
+                binding.textCpf.visibility = TextView.VISIBLE
+                binding.textPassword.visibility = TextView.VISIBLE
+                binding.buttonEnter.visibility = Button.VISIBLE
             }
         }
 

@@ -5,11 +5,13 @@ import androidx.room.PrimaryKey;
 import java.time.LocalDate;
 
 @Entity(tableName = "tb_user")
-public class User(
+data class User(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
     val birthdate: LocalDate,
     val cpf: String,
-    val password: String
+    val phoneNumber: String,
+    val password: String,
+    val role: Role
 )
