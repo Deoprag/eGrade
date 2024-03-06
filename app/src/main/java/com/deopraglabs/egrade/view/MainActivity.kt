@@ -19,7 +19,6 @@ import com.google.android.material.resources.TextAppearance
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var timer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,30 +48,10 @@ class MainActivity : AppCompatActivity() {
             mediaPlayer.isLooping = false
             mediaPlayer.start()
         }
-
-        startAnimation()
     }
 
-    private fun startAnimation() {
-        timer = object : CountDownTimer(5000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
+    private suspend fun isDatabaseWorking(): Boolean {
 
-            override fun onFinish() {
-                binding.videoStart.stopPlayback()
-                binding.videoStart.visibility = VideoView.INVISIBLE
-                binding.barStart.visibility = ProgressBar.INVISIBLE
-                binding.imageStart.visibility = ImageView.VISIBLE
-                binding.textCpf.visibility = TextView.VISIBLE
-                binding.textPassword.visibility = TextView.VISIBLE
-                binding.buttonEnter.visibility = Button.VISIBLE
-            }
-        }
-
-        timer.start()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        timer.cancel()
+        return false;
     }
 }
