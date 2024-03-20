@@ -56,8 +56,8 @@
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            android:scaleX="4"
-            android:scaleY="4"
+            android:scaleX="3"
+            android:scaleY="3"
             android:alpha="1" />
     </ConstraintSet>
 </MotionScene>
