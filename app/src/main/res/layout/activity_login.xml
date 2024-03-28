@@ -52,11 +52,11 @@
         app:srcCompat="@drawable/icon" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/loginButton"
         android:layout_width="142dp"
         android:layout_height="62dp"
-        android:background="#DD0150"
-        android:text="Button"
+        android:backgroundTint="#DD0150"
+        android:text="Login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
