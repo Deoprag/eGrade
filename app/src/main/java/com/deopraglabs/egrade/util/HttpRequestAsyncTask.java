@@ -1,17 +1,19 @@
 package com.deopraglabs.egrade.util;
 
 import android.os.AsyncTask;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Map;
 
+import lombok.Getter;
+
+@Getter
 public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
 
     private Map<String, String> params;
     private String urlString;
+    private int responseCode = -1;
 
     public HttpRequestAsyncTask(Map<String, String> params, String urlString) {
         this.params = params;
@@ -21,20 +23,12 @@ public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-            // Create URL object
             URL url = new URL(urlString);
-
-            // Create connection object
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            // Set request method to POST
             conn.setRequestMethod("POST");
-
-            // Enable output and input streams
             conn.setDoOutput(true);
             conn.setDoInput(true);
 
-            // Construct the request parameters
             StringBuilder postData = new StringBuilder();
             postData.append("{");
             for (Map.Entry<String, String> param : params.entrySet()) {
@@ -51,7 +45,6 @@ public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
             postData.deleteCharAt(postData.length() - 1);
             postData.append("\n}");
 
-            System.out.println(postData);
             byte[] postDataBytes = postData.toString().getBytes("UTF-8");
 
             conn.setRequestProperty("Content-Length", String.valueOf(postDataBytes.length));
@@ -60,25 +53,15 @@ public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
             try (OutputStream out = conn.getOutputStream()) {
                 out.write(postDataBytes);
             }
-            System.out.println(postDataBytes);
 
-            int responseCode = conn.getResponseCode();
+            responseCode = conn.getResponseCode();
 
             conn.disconnect();
 
             return responseCode;
         } catch (Exception e) {
             e.printStackTrace();
-            return -1; // Return a special code for network error
-        }
-    }
-
-    @Override
-    protected void onPostExecute(Integer responseCode) {
-        if (responseCode != -1) {
-            System.out.println("Response Code: " + responseCode);
-        } else {
-            System.out.println("Network Error!");
+            return -1;
         }
     }
 }

@@ -38,6 +38,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.activity:activity:1.8.2")
     compileOnly("org.projectlombok:lombok:1.18.32")
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

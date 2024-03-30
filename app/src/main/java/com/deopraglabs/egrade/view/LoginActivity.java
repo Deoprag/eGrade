@@ -2,8 +2,10 @@ package com.deopraglabs.egrade.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.util.HttpRequestAsyncTask;
@@ -23,18 +25,36 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final Button loginButton = findViewById(R.id.loginButton);
+        final Button loginButton = findViewById(R.id.login_button);
+        final EditText username = findViewById(R.id.username);
+        final EditText password = findViewById(R.id.password);
+
         loginButton.setOnClickListener(view -> {
-            final Map<String, String> requestMap = new HashMap<>();
-            requestMap.put("name", "Pedro Teste");
-            requestMap.put("email", "pdroesofiarabelo@gmail.com");
-            requestMap.put("role", "ALUNO");
-            requestMap.put("birthDate", "27/02/2004");
-            requestMap.put("cpf", "10938448512");
-            requestMap.put("phoneNumber", "41999999992");
-            requestMap.put("password", "Pedro123");
-            HttpRequestAsyncTask hrat = new HttpRequestAsyncTask(requestMap, "http://192.168.1.6:8080/api/v1/user/save");
-            hrat.execute();
+            if(login(username.getText().toString(), password.getText().toString())) {
+                startActivity(new Intent(LoginActivity.this, UserActivity.class));
+                finish();
+            } else {
+
+            }
         });
+    }
+
+    private boolean login(String cpf, String password) {
+        final Map<String, String> requestMap = new HashMap<>();
+
+        requestMap.put("cpf", cpf);
+        requestMap.put("password", password);
+
+        HttpRequestAsyncTask hrat2 = new HttpRequestAsyncTask(requestMap, "http://192.168.1.6:8080/api/v1/user/login");
+        hrat2.execute();
+
+        try {
+            if(hrat2.get().equals(200)) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
