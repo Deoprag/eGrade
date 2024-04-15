@@ -3,11 +3,14 @@ package com.deopraglabs.egrade.view;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.deopraglabs.egrade.R;
+import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Teacher;
 import com.deopraglabs.egrade.util.HttpRequestAsyncTask;
 import com.google.gson.Gson;
 
@@ -26,16 +29,20 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         final Button loginButton = findViewById(R.id.login_button);
+        final Button problemButton = findViewById(R.id.problem_button);
         final EditText username = findViewById(R.id.username);
         final EditText password = findViewById(R.id.password);
 
         loginButton.setOnClickListener(view -> {
-            if(login(username.getText().toString(), password.getText().toString())) {
-                startActivity(new Intent(LoginActivity.this, UserActivity.class));
-                finish();
-            } else {
+            startActivity(new Intent(LoginActivity.this, UserActivity.class));
+            finish();
+        });
 
-            }
+        problemButton.setOnClickListener(view -> {
+            final String url = "https://www.google.com/";
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
         });
     }
 
@@ -45,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         requestMap.put("cpf", cpf);
         requestMap.put("password", password);
 
-        HttpRequestAsyncTask hrat2 = new HttpRequestAsyncTask(requestMap, "http://192.168.1.6:8080/api/v1/user/login");
+        final HttpRequestAsyncTask hrat2 = new HttpRequestAsyncTask(requestMap, "http://192.168.1.6:8080/api/v1/login", Method.POST);
         hrat2.execute();
 
         try {

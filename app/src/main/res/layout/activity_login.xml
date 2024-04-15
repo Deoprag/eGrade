@@ -27,6 +27,7 @@
         android:id="@+id/login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#320F00"
         android:text="Faça login para continuar"
         android:textSize="18sp"
         android:fontFamily="@font/antic"/>
@@ -35,20 +36,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        android:layout_marginBottom="20dp">
+        android:orientation="vertical">
         
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:hint="Usuário"
-            android:textColorHint="#777777"
-            app:boxStrokeColor="#777777"
+            android:textColorHint="@color/light_black"
+            app:boxStrokeColor="@color/light_black"
+            app:cursorColor="@color/light_black"
+            app:hintTextColor="@color/light_black"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/username"
-                android:textColor="#777777"
+                android:textColor="@color/light_black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"/>
@@ -59,29 +61,34 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:hint="Senha"
-            android:textColorHint="#777777"
             app:passwordToggleEnabled="true"
-            app:passwordToggleTint="#777777"
-            app:boxStrokeColor="#777777"
+            app:passwordToggleTint="@color/light_black"
+            android:textColorHint="@color/light_black"
+            app:boxStrokeColor="@color/light_black"
+            app:cursorColor="@color/light_black"
+            app:hintTextColor="@color/light_black"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/password"
-                android:textColor="#777777"
-                android:password="true"
+                android:textColor="@color/light_black"
+                android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/forgot_password_button"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:textColor="#777777"
+            android:textColor="@color/light_black"
             android:layout_gravity="end"
             android:elevation="0dp"
             android:text="Esqueceu sua senha?"
             android:layout_margin="5dp"
-            android:background="@drawable/rippleless_button"/>
-z
+            android:textAlignment="viewEnd"
+            android:paddingEnd="0dp"
+            android:background="@color/transparent"/>
+
         <Button
             android:id="@+id/login_button"
             android:layout_width="match_parent"
@@ -91,7 +98,19 @@ z
             android:text="Entrar"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:backgroundTint="#DD0150"/>
+            android:backgroundTint="@color/pink"/>
+
+        <Button
+            android:id="@+id/problem_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="0dp"
+            android:textColor="@color/light_black"
+            android:textSize="12sp"
+            android:elevation="0dp"
+            android:text="Reporte um problema"
+            android:layout_margin="5dp"
+            android:background="@color/transparent"/>
 
     </LinearLayout>
 </LinearLayout>

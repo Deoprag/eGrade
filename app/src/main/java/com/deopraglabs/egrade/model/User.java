@@ -1,18 +1,16 @@
 package com.deopraglabs.egrade.model;
 
+import java.io.Serializable;
 import java.sql.Blob;
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class User {
+public abstract class User implements Serializable {
 
-    private int id;
+    private static final long serialVersionUID = 1L;
+
     private String name;
     private String cpf;
     private String email;
@@ -20,5 +18,5 @@ public class User {
     private Date birthDate;
     private Blob profilePicture;
     private String password;
-    private Role role;
+    private boolean active = false;
 }

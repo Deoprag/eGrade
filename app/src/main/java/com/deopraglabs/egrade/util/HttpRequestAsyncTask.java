@@ -1,6 +1,13 @@
 package com.deopraglabs.egrade.util;
 
 import android.os.AsyncTask;
+
+import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Teacher;
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -8,16 +15,17 @@ import java.util.Map;
 
 import lombok.Getter;
 
-@Getter
 public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
 
     private Map<String, String> params;
     private String urlString;
-    private int responseCode = -1;
+    private Method method;
+    public int responseCode = -1;
 
-    public HttpRequestAsyncTask(Map<String, String> params, String urlString) {
+    public HttpRequestAsyncTask(Map<String, String> params, String urlString, Method method) {
         this.params = params;
         this.urlString = urlString;
+        this.method = method;
     }
 
     @Override
@@ -25,7 +33,7 @@ public class HttpRequestAsyncTask extends AsyncTask<Void, Void, Integer> {
         try {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(method.toString());
             conn.setDoOutput(true);
             conn.setDoInput(true);
 

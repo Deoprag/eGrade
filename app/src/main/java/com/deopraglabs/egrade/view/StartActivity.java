@@ -8,15 +8,15 @@ import android.os.Handler;
 
 import com.deopraglabs.egrade.R;
 
-public class MainActivity extends AppCompatActivity {
+public class StartActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_start);
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            startActivity(new Intent(StartActivity.this, LoginActivity.class));
             finish();
         }, 3000);
     }
