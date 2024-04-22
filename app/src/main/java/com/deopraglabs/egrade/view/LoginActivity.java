@@ -2,24 +2,25 @@ package com.deopraglabs.egrade.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.model.Method;
-import com.deopraglabs.egrade.model.Teacher;
-import com.deopraglabs.egrade.util.HttpRequestAsyncTask;
+import com.deopraglabs.egrade.model.User;
+import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,8 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText password = findViewById(R.id.password);
 
         loginButton.setOnClickListener(view -> {
-            startActivity(new Intent(LoginActivity.this, UserActivity.class));
-            finish();
+            login(username.getText().toString(), password.getText().toString());
         });
 
         problemButton.setOnClickListener(view -> {
@@ -46,22 +46,48 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean login(String cpf, String password) {
-        final Map<String, String> requestMap = new HashMap<>();
+    private boolean login(final String cpf, final String password) {
+        final String url = "http://192.168.1.3:8080/api/v1/login";
+        final String method = "POST";
+        final String body = HttpUtil.generateRequestBody(
+                "cpf", cpf,
+                    "password", password
+        );
 
-        requestMap.put("cpf", cpf);
-        requestMap.put("password", password);
+        HttpUtil.sendRequest(url, method, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                final Gson gson = new Gson();
+                final User user = gson.fromJson(response, User.class);
+                switch (user.getRole()) {
+                    case ALUNO:
+                        startActivity(new Intent(LoginActivity.this, UserActivity.class));
+                        finish();
+                        break;
 
-        final HttpRequestAsyncTask hrat2 = new HttpRequestAsyncTask(requestMap, "http://192.168.1.6:8080/api/v1/login", Method.POST);
-        hrat2.execute();
+                    case PROFESSOR:
+                        startActivity(new Intent(LoginActivity.this, UserActivity.class));
+                        finish();
+                        break;
 
-        try {
-            if(hrat2.get().equals(200)) {
-                return true;
+                    case COORDENADOR:
+                        startActivity(new Intent(LoginActivity.this, UserActivity.class));
+                        finish();
+                        break;
+
+                    default:
+//                        Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+            @Override
+            public void onFailure(String error) {
+//                Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                Log.e("Erro", error);
+            }
+        });
         return false;
     }
 }

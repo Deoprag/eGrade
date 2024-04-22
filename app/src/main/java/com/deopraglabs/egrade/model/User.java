@@ -7,7 +7,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public abstract class User implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,4 +19,13 @@ public abstract class User implements Serializable {
     private Blob profilePicture;
     private String password;
     private boolean active = false;
+    private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
