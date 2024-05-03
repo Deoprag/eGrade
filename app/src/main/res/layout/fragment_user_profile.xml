@@ -12,12 +12,14 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/raw_icon"/>
+        app:srcCompat="@drawable/raw_icon"
+        android:background="@color/white"
+        android:padding="10dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="50dp"
         android:drawableLeft="@drawable/baseline_id_24"
         android:drawablePadding="10dp"
         android:padding="15dp"
