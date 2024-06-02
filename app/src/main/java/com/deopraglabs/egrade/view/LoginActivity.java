@@ -14,6 +14,9 @@ import android.widget.Toast;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.User;
+import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
 
@@ -48,8 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean login(final String cpf, final String password) {
-        final String url = "http://192.168.1.41:8080/api/v1/login";
-//        final String url = "http://192.168.1.3:8080/api/v1/login";
+        final String url = "http://192.168.1.14:8080/api/v1/login";
         final String body = HttpUtil.generateRequestBody(
                 "cpf", cpf,
                     "password", password
@@ -61,19 +63,30 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 final Gson gson = new Gson();
                 final User user = gson.fromJson(response, User.class);
+                Intent intent;
+
                 switch (user.getRole()) {
-                    case ALUNO:
-                        startActivity(new Intent(LoginActivity.this, StudentActivity.class));
+                    case COORDENADOR:
+                        final Coordinator coordinator = gson.fromJson(response, Coordinator.class);
+                        intent = new Intent(LoginActivity.this, CoordinatorActivity.class);
+                        intent.putExtra("user", coordinator);
+                        startActivity(intent);
                         finish();
                         break;
 
                     case PROFESSOR:
-                        startActivity(new Intent(LoginActivity.this, ProfessorActivity.class));
+                        final Professor professor = gson.fromJson(response, Professor.class);
+                        intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                        intent.putExtra("user", professor);
+                        startActivity(intent);
                         finish();
                         break;
 
-                    case COORDENADOR:
-                        startActivity(new Intent(LoginActivity.this, CoordinatorActivity.class));
+                    case ALUNO:
+                        final Student student = gson.fromJson(response, Student.class);
+                        intent = new Intent(LoginActivity.this, StudentActivity.class);
+                        intent.putExtra("user", student);
+                        startActivity(intent);
                         finish();
                         break;
 

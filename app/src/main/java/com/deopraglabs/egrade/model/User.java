@@ -22,10 +22,7 @@ public class User implements Serializable {
     private Role role;
 
     public Role getRole() {
-        return role;
+        return this.role;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }
