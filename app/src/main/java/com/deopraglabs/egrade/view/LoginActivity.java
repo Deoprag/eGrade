@@ -78,14 +78,18 @@ public class LoginActivity extends AppCompatActivity {
                         break;
 
                     default:
-                        Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(() -> {
+                            Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                        });
                         break;
                 }
             }
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> {
+                    Toast.makeText(LoginActivity.this, "Usuário e/ou senha incorretos!", Toast.LENGTH_SHORT).show();
+                });
                 Log.e("Erro", error);
             }
         });
