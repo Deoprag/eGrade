@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         problemButton.setOnClickListener(view -> {
-            final String url = "https://www.google.com/";
+            final String url = "https://docs.google.com/forms/d/e/1FAIpQLSfvfqBnRlb-2erRVYynsGKRQpDE6i8X3NfpjVEubdpvhbRgGA/viewform?usp=sf_link";
             final Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);
