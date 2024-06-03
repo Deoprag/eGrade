@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 
 import com.deopraglabs.egrade.R;
 
-public class UserGradeFragment extends Fragment {
+public class StudentGradeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_grade, container, false);
+        return inflater.inflate(R.layout.fragment_student_grade, container, false);
     }
 }

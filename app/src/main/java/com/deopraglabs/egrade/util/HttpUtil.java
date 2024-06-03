@@ -2,6 +2,7 @@ package com.deopraglabs.egrade.util;
 
 import android.util.Log;
 
+import com.deopraglabs.egrade.model.Method;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -24,14 +25,14 @@ public class HttpUtil {
         void onFailure(String error);
     }
 
-    public static void sendRequest(String url, String method, String body, HttpRequestListener listener) {
+    public static void sendRequest(String url, Method method, String body, HttpRequestListener listener) {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody requestBody = RequestBody.create(mediaType, body);
 
         Request request = new Request.Builder()
                 .url(url)
-                .method(method, requestBody)
+                .method(method.toString(), requestBody)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

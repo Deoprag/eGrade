@@ -8,31 +8,31 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.databinding.ActivityUserBinding;
+import com.deopraglabs.egrade.databinding.ActivityCoordinatorBinding;
 
-public class UserActivity extends AppCompatActivity {
+public class CoordinatorActivity extends AppCompatActivity {
 
-    ActivityUserBinding binding;
+    ActivityCoordinatorBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityUserBinding.inflate(getLayoutInflater());
+        binding = ActivityCoordinatorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        replaceFragment(new UserHomeFragment());
+        replaceFragment(new StudentHomeFragment());
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
             if (item.getItemId() == R.id.teachers) {
-                replaceFragment(new UserTeacherFragment());
+                replaceFragment(new StudentProfessorFragment());
             } else if (item.getItemId() == R.id.grades) {
-                replaceFragment(new UserGradeFragment());
+                replaceFragment(new StudentGradeFragment());
             } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(new UserProfileFragment());
+                replaceFragment(new StudentProfileFragment());
             } else {
-                replaceFragment(new UserHomeFragment());
+                replaceFragment(new StudentHomeFragment());
             }
 
             return true;
