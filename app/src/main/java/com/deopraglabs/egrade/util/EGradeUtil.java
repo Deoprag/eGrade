@@ -1,5 +1,8 @@
 package com.deopraglabs.egrade.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.*;
 import java.sql.*;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +28,10 @@ public class EGradeUtil {
     public static String dateToString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(date);
+    }
+
+    public static Bitmap convertImageFromByte(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
     public static FileInputStream convertFromBlob(Blob image) throws Exception {

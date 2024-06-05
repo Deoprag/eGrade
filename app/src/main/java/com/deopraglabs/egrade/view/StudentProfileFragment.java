@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.deopraglabs.egrade.R;
@@ -23,6 +25,7 @@ public class StudentProfileFragment extends Fragment {
     private TextView course;
     private TextView email;
     private TextView phoneNumber;
+    private ImageView profileImage;
 
     public static StudentProfileFragment newInstance(Student student) {
         StudentProfileFragment fragment = new StudentProfileFragment();
@@ -50,12 +53,18 @@ public class StudentProfileFragment extends Fragment {
         course = view.findViewById(R.id.course);
         email = view.findViewById(R.id.email);
         phoneNumber = view.findViewById(R.id.phoneNumber);
+        profileImage = view.findViewById(R.id.profileImage);
 
         id.setText(String.valueOf(student.getId()));
         birthDate.setText(EGradeUtil.dateToString(student.getBirthDate()));
         course.setText(student.getCourse().getName());
         email.setText(student.getEmail());
         phoneNumber.setText(student.getPhoneNumber());
+        if (student.getProfilePicture() != null) {
+            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
+        } else {
+            profileImage.setImageResource(R.drawable.icon);
+        }
 
         return view;
     }
