@@ -25,6 +25,14 @@ public class EGradeUtil {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
+    public static String formatNumber(String numero) {
+        String ddd = numero.substring(0, 2);
+        String parte1 = numero.substring(2, 7);
+        String parte2 = numero.substring(7);
+
+        return String.format("(%s) %s-%s", ddd, parte1, parte2);
+    }
+
     public static String dateToString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(date);

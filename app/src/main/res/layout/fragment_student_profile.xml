@@ -13,9 +13,9 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        app:srcCompat="@drawable/raw_icon"
-        android:background="@color/white"
-        android:padding="10dp"/>
+        android:background="@color/transparent"
+        android:padding="10dp"
+        app:srcCompat="@drawable/raw_icon"/>
 
     <TextView
         android:id="@+id/id"
@@ -77,4 +77,40 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+        <Button
+            android:id="@+id/btnEditData"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:text="Editar Dados"
+            android:textColor="@color/pink"
+            android:backgroundTint="@color/white"
+            android:gravity="center"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/btnSaveData"
+            android:layout_width="150dp"
+            android:layout_height="70dp"
+            android:text="Salvar Dados"
+            android:textColor="@color/pink"
+            android:backgroundTint="@color/white"
+            android:gravity="center"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </LinearLayout>
 </LinearLayout>

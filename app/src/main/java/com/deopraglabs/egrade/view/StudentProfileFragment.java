@@ -1,6 +1,8 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,9 +10,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Student;
@@ -26,6 +30,8 @@ public class StudentProfileFragment extends Fragment {
     private TextView email;
     private TextView phoneNumber;
     private ImageView profileImage;
+
+    private Button btnEditData;
 
     public static StudentProfileFragment newInstance(Student student) {
         StudentProfileFragment fragment = new StudentProfileFragment();
@@ -54,16 +60,17 @@ public class StudentProfileFragment extends Fragment {
         email = view.findViewById(R.id.email);
         phoneNumber = view.findViewById(R.id.phoneNumber);
         profileImage = view.findViewById(R.id.profileImage);
+        btnEditData = view.findViewById(R.id.btnEditData);
 
-        id.setText(String.valueOf(student.getId()));
-        birthDate.setText(EGradeUtil.dateToString(student.getBirthDate()));
-        course.setText(student.getCourse().getName());
-        email.setText(student.getEmail());
-        phoneNumber.setText(student.getPhoneNumber());
+        id.setText("Matrícula: " + student.getId());
+        birthDate.setText("Nascimento: " + EGradeUtil.dateToString(student.getBirthDate()));
+        course.setText("Curso: " + student.getCourse().getName());
+        email.setText("Email: " + student.getEmail());
+        phoneNumber.setText("Celular " + EGradeUtil.formatNumber(student.getPhoneNumber()));
         if (student.getProfilePicture() != null) {
             profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
         } else {
-            profileImage.setImageResource(R.drawable.icon);
+            profileImage.setImageResource(R.drawable.profile_icon);
         }
 
         return view;
