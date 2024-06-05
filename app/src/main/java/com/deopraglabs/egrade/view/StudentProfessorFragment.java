@@ -9,8 +9,28 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.deopraglabs.egrade.R;
+import com.deopraglabs.egrade.model.Student;
 
 public class StudentProfessorFragment extends Fragment {
+
+    private Student student;
+
+    public static StudentProfileFragment newInstance(Student student) {
+        StudentProfileFragment fragment = new StudentProfileFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("user", student);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            student = (Student) getArguments().getSerializable("user");
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

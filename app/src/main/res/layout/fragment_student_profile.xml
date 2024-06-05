@@ -17,6 +17,7 @@
         android:padding="10dp"/>
 
     <TextView
+        android:id="@+id/id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -29,6 +30,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/birthDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/sharp_calendar_24"
@@ -40,6 +42,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/course"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/baseline_course_book_24"
@@ -51,6 +54,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/baseline_email_24"
@@ -62,6 +66,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/phoneNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/baseline_phone_24"

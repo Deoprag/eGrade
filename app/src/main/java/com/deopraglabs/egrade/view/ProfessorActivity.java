@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,16 +10,23 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityProfessorBinding;
+import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.model.Student;
 
 public class ProfessorActivity extends AppCompatActivity {
 
     ActivityProfessorBinding binding;
+
+    private Professor professor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProfessorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        final Intent intent = getIntent();
+        professor = (Professor) intent.getSerializableExtra("user");
 
         replaceFragment(new StudentHomeFragment());
         binding.bottomNavigationView.setBackground(null);

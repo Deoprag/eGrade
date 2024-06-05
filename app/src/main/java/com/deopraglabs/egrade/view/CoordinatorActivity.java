@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,16 +10,23 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityCoordinatorBinding;
+import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.model.Student;
 
 public class CoordinatorActivity extends AppCompatActivity {
 
     ActivityCoordinatorBinding binding;
+
+    private Coordinator coordinator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCoordinatorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        final Intent intent = getIntent();
+        coordinator = (Coordinator) intent.getSerializableExtra("user");
 
         replaceFragment(new StudentHomeFragment());
         binding.bottomNavigationView.setBackground(null);

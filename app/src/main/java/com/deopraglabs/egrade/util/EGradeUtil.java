@@ -5,6 +5,7 @@ import java.sql.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Base64;
@@ -19,6 +20,11 @@ public class EGradeUtil {
 
     public static Date localDateToDate(LocalDate localDate) {
         return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static String dateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(date);
     }
 
     public static FileInputStream convertFromBlob(Blob image) throws Exception {

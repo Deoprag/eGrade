@@ -16,13 +16,9 @@ public class User implements Serializable {
     private String email;
     private String phoneNumber;
     private Date birthDate;
-    private Blob profilePicture;
+    private byte[] profilePicture;
     private String password;
     private boolean active = false;
     private Role role;
-
-    public Role getRole() {
-        return this.role;
-    }
 
 }

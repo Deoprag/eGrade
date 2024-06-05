@@ -12,5 +12,4 @@ public class Coordinator extends User {
     private static final long serialVersionUID = 1L;
 
     private long id;
-    private List<Course> courses;
 }
