@@ -8,15 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Grade;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.model.Subject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class StudentGradeFragment extends Fragment {
 
@@ -49,8 +52,7 @@ public class StudentGradeFragment extends Fragment {
 
         gradeList = view.findViewById(R.id.gradeList);
 
-//        List<Grade> grades = student.getGrades();
-        List<Grade> grades = new ArrayList<>();
+        List<Grade> grades = student.getGrades();
 
         adapter = new ArrayAdapter<Grade>(getContext(), R.layout.item_grade, R.id.textViewSubject, grades) {
             @Override
@@ -58,16 +60,13 @@ public class StudentGradeFragment extends Fragment {
                 View view = super.getView(position, convertView, parent);
                 final TextView textViewSubject = view.findViewById(R.id.textViewSubject);
                 final TextView textViewAbscence = view.findViewById(R.id.textViewAbsence);
-                final TextView textViewGradeN1 = view.findViewById(R.id.textViewGradeN1);
-                final TextView textViewGradeN2 = view.findViewById(R.id.textViewGradeN2);
-                final TextView textViewGrade = view.findViewById(R.id.textViewGradeFinal);
+                final TextView textViewGrade = view.findViewById(R.id.textViewGrade);
+                final Button btnInfo = view.findViewById(R.id.btnInfo);
 
-//                Grade grade = grades.get(position);
-                textViewSubject.setText("Teste");
-                textViewAbscence.setText("10");
-//                textViewGradeN1.setText(String.valueOf(grade.getN1()));
-//                textViewGradeN2.setText(String.valueOf(grade.getN2()));
-//                textViewGrade.setText(String.valueOf((grade.getN1() + grade.getN2()) / 2));
+                Grade grade = grades.get(position);
+                textViewSubject.setText(grade.getSubject().getName());
+//                textViewAbscence.setText());
+                textViewGrade.setText(String.valueOf((grade.getN1() + grade.getN2()) / 2));
 
                 return view;
             }

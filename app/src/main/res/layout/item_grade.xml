@@ -27,7 +27,7 @@
         android:gravity="center" />
 
     <TextView
-        android:id="@+id/textViewGradeN1"
+        android:id="@+id/textViewGrade"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -36,23 +36,14 @@
         android:textColor="@color/black"
         android:gravity="center" />
 
-    <TextView
-        android:id="@+id/textViewGradeN2"
+    <Button
+        android:id="@+id/btnInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="8dp"
         android:textSize="16sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
-
-    <TextView
-        android:id="@+id/textViewGradeFinal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
+        android:backgroundTint="@color/pink"
+        android:textColor="@color/white"
         android:gravity="center" />
 </LinearLayout>

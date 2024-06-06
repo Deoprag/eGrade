@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="2dp"
     android:background="#FAFAFA">
 
     <LinearLayout
@@ -14,6 +13,17 @@
         android:background="@color/pink"
         android:paddingBottom="8dp"
         android:paddingTop="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Professor"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:layout_width="0dp"
@@ -30,7 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Faltas"
+            android:text="Nota 2"
             android:textStyle="bold"
             android:gravity="center"
             android:padding="8dp"
@@ -41,18 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Nota"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Info"
+            android:text="Nota Final"
             android:textStyle="bold"
             android:gravity="center"
             android:padding="8dp"
@@ -61,7 +60,7 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/gradeList"
+        android:id="@+id/professorList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="#DDDDDD"
