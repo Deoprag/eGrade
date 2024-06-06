@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean login(final String cpf, final String password) {
-        final String url = "http://192.168.1.41:8080/api/v1/login";
+        final String url = "http://10.30.9.230:8080/api/v1/login";
         final String body = HttpUtil.generateRequestBody(
                 "cpf", cpf,
                     "password", password

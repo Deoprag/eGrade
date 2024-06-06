@@ -13,6 +13,6 @@ public class Subject implements Serializable {
     private long id;
     private String name;
     private Professor professor;
-    private List<Course> courses;
-    private List<Grade> grades;
+//    private List<Course> courses;
+//    private List<Grade> grades;
 }
