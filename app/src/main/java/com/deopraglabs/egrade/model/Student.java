@@ -16,5 +16,6 @@ public class Student extends User implements Serializable {
     private Course course;
     private List<Certificate> certificates;
     private List<Grade> grades;
+    private List<Attendance> attendances;
 
 }
