@@ -28,21 +28,23 @@ public class CoordinatorActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         coordinator = (Coordinator) intent.getSerializableExtra("user");
 
-        replaceFragment(new StudentHomeFragment());
+        replaceFragment(new CoordinatorHomeFragment());
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment;
 
-            if (item.getItemId() == R.id.teachers) {
-                replaceFragment(new StudentProfessorFragment());
-            } else if (item.getItemId() == R.id.grades) {
-                replaceFragment(new StudentGradeFragment());
-            } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(new StudentProfileFragment());
+            if (item.getItemId() == R.id.coordinator_classes) {
+                selectedFragment = new CoordinatorStudentsFragment();
+            } else if (item.getItemId() == R.id.coordinator_courses) {
+                selectedFragment = new CoordinatorCourseFragment();
+            } else if (item.getItemId() == R.id.coordinator_profile) {
+                selectedFragment = new CoordinatorProfileFragment();
             } else {
-                replaceFragment(new StudentHomeFragment());
+                selectedFragment = new CoordinatorHomeFragment();
             }
 
+            replaceFragment(selectedFragment);
             return true;
         });
     }

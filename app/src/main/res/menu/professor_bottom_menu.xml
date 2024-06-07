@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/professor_home"
+        android:title="Inicio"
+        android:icon="@drawable/home_24"/>
+
+    <item
+        android:id="@+id/professor_courses"
+        android:title="Turmas"
+        android:icon="@drawable/people_24"/>
+
+    <item
+        android:id="@+id/fab"
+        android:title=""
+        android:enabled="false"/>
+
+    <item
+        android:id="@+id/professor_solicitations"
+        android:title="Solicitações"
+        android:icon="@drawable/book_24"/>
+
+    <item
+        android:id="@+id/professor_profile"
+        android:title="Perfil"
+        android:icon="@drawable/user_24"/>
+
+</menu>

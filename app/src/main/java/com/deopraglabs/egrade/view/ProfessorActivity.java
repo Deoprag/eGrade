@@ -28,19 +28,19 @@ public class ProfessorActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         professor = (Professor) intent.getSerializableExtra("user");
 
-        replaceFragment(new StudentHomeFragment());
+        replaceFragment(new ProfessorHomeFragment());
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            if (item.getItemId() == R.id.teachers) {
-                replaceFragment(new StudentProfessorFragment());
-            } else if (item.getItemId() == R.id.grades) {
-                replaceFragment(new StudentGradeFragment());
-            } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(new StudentProfileFragment());
+            if (item.getItemId() == R.id.professor_courses) {
+                replaceFragment(new ProfessorCoursesFragment());
+            } else if (item.getItemId() == R.id.professor_solicitations) {
+                replaceFragment(new ProfessorSolicitationFragment());
+            } else if (item.getItemId() == R.id.professor_profile) {
+                replaceFragment(new ProfessorProfileFragment());
             } else {
-                replaceFragment(new StudentHomeFragment());
+                replaceFragment(new ProfessorHomeFragment());
             }
 
             return true;

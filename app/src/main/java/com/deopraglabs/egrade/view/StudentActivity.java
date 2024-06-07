@@ -33,11 +33,11 @@ public class StudentActivity extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
-            if (item.getItemId() == R.id.teachers) {
+            if (item.getItemId() == R.id.student_professors) {
                 selectedFragment = new StudentProfessorFragment();
-            } else if (item.getItemId() == R.id.grades) {
+            } else if (item.getItemId() == R.id.student_grades) {
                 selectedFragment = new StudentGradeFragment();
-            } else if (item.getItemId() == R.id.profile) {
+            } else if (item.getItemId() == R.id.student_profile) {
                 selectedFragment = new StudentProfileFragment();
             } else {
                 selectedFragment = new StudentHomeFragment();
