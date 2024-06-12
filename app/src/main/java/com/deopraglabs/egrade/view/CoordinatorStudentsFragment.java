@@ -15,6 +15,8 @@ public class CoordinatorStudentsFragment extends Fragment {
 
     private Coordinator coordinator;
 
+    private CoordinatorActivity ca;
+
     public static CoordinatorStudentsFragment newInstance(Coordinator coordinator) {
         CoordinatorStudentsFragment fragment = new CoordinatorStudentsFragment();
         Bundle args = new Bundle();

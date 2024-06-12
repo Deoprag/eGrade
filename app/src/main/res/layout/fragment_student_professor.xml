@@ -1,68 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FAFAFA">
+    android:fillViewport="true">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/pink"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Professor"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Matéria"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Nota 2"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Nota Final"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/professorList"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:divider="#DDDDDD"
-        android:dividerHeight="1dp" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="2dp"
+        android:background="#FAFAFA">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@color/pink"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Professor"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Matéria"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nota 2"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nota Final"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/professorList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#DDDDDD"
+            android:dividerHeight="1dp" />
+    </LinearLayout>
+</HorizontalScrollView>
