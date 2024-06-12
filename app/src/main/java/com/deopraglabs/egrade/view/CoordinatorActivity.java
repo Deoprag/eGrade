@@ -35,11 +35,11 @@ public class CoordinatorActivity extends AppCompatActivity {
             Fragment selectedFragment;
 
             if (item.getItemId() == R.id.coordinator_classes) {
-                selectedFragment = new CoordinatorStudentsFragment();
+                selectedFragment = CoordinatorStudentsFragment.newInstance(coordinator);
             } else if (item.getItemId() == R.id.coordinator_courses) {
-                selectedFragment = new CoordinatorCourseFragment();
+                selectedFragment = CoordinatorCourseFragment.newInstance(coordinator);
             } else if (item.getItemId() == R.id.coordinator_profile) {
-                selectedFragment = new CoordinatorProfileFragment();
+                selectedFragment = CoordinatorProfileFragment.newInstance(coordinator);
             } else {
                 selectedFragment = new CoordinatorHomeFragment();
             }

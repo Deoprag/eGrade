@@ -41,11 +41,15 @@ android {
 
 dependencies {
 
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("androidx.activity:activity:1.8.2")
     implementation("org.projectlombok:lombok:1.18.32")
     implementation("androidx.annotation:annotation:1.6.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.navigation:navigation-fragment:2.6.0")
+    implementation("androidx.navigation:navigation-ui:2.6.0")
     annotationProcessor("org.projectlombok:lombok:1.18.32")
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

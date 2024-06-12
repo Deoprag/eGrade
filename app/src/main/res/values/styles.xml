@@ -1,0 +1,49 @@
+<!-- res/values/styles.xml -->
+<resources>
+
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#E00051</item>
+        <item name="colorPrimaryDark">#C70045</item>
+        <item name="colorAccent">#FF4081</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+    </style>
+
+    <style name="EditTextStyle">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:backgroundTint">#E00051</item>
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="SpinnerStyle">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:backgroundTint">#E00051</item>
+    </style>
+
+    <style name="CheckBoxStyle">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:buttonTint">#E00051</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:backgroundTint">#E00051</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="ItemTextViewStyle">
+        <item name="android:textColor">#757575</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ItemTitleTextViewStyle">
+        <item name="android:textColor">#E00051</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="EditButtonStyle">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">#E00051</item>
+    </style>
+</resources>
