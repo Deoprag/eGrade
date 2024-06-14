@@ -11,7 +11,6 @@ import java.util.Date;
 public class Attendance implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
     private Date date;
     boolean isPresent = false;

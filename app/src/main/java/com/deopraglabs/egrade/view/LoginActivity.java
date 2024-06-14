@@ -17,6 +17,7 @@ import com.deopraglabs.egrade.model.User;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
 
@@ -51,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean login(final String cpf, final String password) {
-        final String url = "http://10.30.9.230:8080/api/v1/login";
+        final String url = EGradeUtil.URL + "/api/v1/login";
         final String body = HttpUtil.generateRequestBody(
                 "cpf", cpf,
                     "password", password

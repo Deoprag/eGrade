@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".EditStudentActivity">
+    tools:context="view.EditStudentActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -85,7 +85,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Excluir"
-            android:textColor="@android:color/holo_red_light"
             style="@style/ButtonStyle" />
 
     </LinearLayout>

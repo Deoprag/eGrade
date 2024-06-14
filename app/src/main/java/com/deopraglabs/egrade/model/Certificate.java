@@ -11,7 +11,6 @@ import java.util.Date;
 public class Certificate implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
     private String justification;
     private Date date;

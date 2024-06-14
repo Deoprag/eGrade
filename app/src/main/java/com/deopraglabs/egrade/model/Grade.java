@@ -12,7 +12,6 @@ import java.io.Serializable;
 public class Grade implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
     private float n1;
     private float n2;

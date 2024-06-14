@@ -23,6 +23,7 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -57,6 +58,8 @@ public class CoordinatorStudentsFragment extends Fragment {
             coordinator = (Coordinator) getArguments().getSerializable("user");
         }
 
+        Log.e("MERDAAAAAAAA", String.valueOf(coordinator));
+
         studentList = new ArrayList<>();
         courseList = new ArrayList<>();
         adapter = new StudentAdapter(getActivity(), studentList, new StudentAdapter.OnItemClickListener() {
@@ -64,6 +67,7 @@ public class CoordinatorStudentsFragment extends Fragment {
             public void onItemClick(Student student) {
                 Intent intent = new Intent(getActivity(), EditStudentActivity.class);
                 intent.putExtra("student", student);
+                intent.putExtra("coordinator", coordinator);
                 startActivity(intent);
             }
         });
@@ -97,9 +101,9 @@ public class CoordinatorStudentsFragment extends Fragment {
     }
 
     private void loadCourses() {
-        final String url = "http://10.30.9.230:8080/api/v1/course/findByCoordinatorId/" + coordinator.getId();
+        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
 
-        HttpUtil.sendRequest(url, Method.POST, "", new HttpUtil.HttpRequestListener() {
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
@@ -107,7 +111,12 @@ public class CoordinatorStudentsFragment extends Fragment {
                 Type courseListType = new TypeToken<List<Course>>(){}.getType();
                 courseList = gson.fromJson(response, courseListType);
 
-                setupCourseSpinner();
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupCourseSpinner();
+                    }
+                });
             }
 
             @Override
@@ -122,24 +131,30 @@ public class CoordinatorStudentsFragment extends Fragment {
             return;
         }
 
-        ArrayAdapter<Course> courseAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_spinner_item, courseList);
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courseList) {
+            courseNames.add(course.getName());
+        }
+
+        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_spinner_item, courseNames);
         courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         courseSpinner.setAdapter(courseAdapter);
 
         courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Course selectedCourse = (Course) parent.getItemAtPosition(position);
+                Course selectedCourse = courseList.get(position); // Obtém o curso completo se necessário
                 loadStudentsByCourse(selectedCourse);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                // Implementação opcional
             }
         });
     }
+
 
     private void loadStudentsByCourse(Course course) {
         // Aqui você implementa a lógica para carregar os estudantes do curso selecionado

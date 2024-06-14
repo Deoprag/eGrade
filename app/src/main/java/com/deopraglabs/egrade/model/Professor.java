@@ -11,7 +11,6 @@ import java.util.List;
 public class Professor extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
 //    private List<Subject> subjects;
 }

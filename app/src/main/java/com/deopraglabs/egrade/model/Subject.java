@@ -9,7 +9,6 @@ import java.util.List;
 public class Subject implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
     private String name;
     private Professor professor;

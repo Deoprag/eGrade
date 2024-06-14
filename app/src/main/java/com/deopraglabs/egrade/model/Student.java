@@ -11,7 +11,6 @@ import java.util.List;
 public class Student extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
     private long id;
     private Course course;
     private List<Certificate> certificates;

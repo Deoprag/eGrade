@@ -28,7 +28,7 @@ public class HttpUtil {
     public static void sendRequest(String url, Method method, String body, HttpRequestListener listener) {
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody requestBody = RequestBody.create(mediaType, body);
+        RequestBody requestBody = method == Method.GET ? null : RequestBody.create(mediaType, body);
 
         Request request = new Request.Builder()
                 .url(url)
