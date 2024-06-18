@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +33,8 @@ import java.util.List;
 public class EditStudentActivity extends AppCompatActivity {
     private Student student;
     private Coordinator coordinator;
+
+    private TextView textId;
     private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText;
     private ImageView profileImageView;
     private Button deleteButton, saveButton;
@@ -51,6 +54,7 @@ public class EditStudentActivity extends AppCompatActivity {
         }
 
         nameEditText = findViewById(R.id.nameEditText);
+        textId = findViewById(R.id.textId);
         cpfEditText = findViewById(R.id.cpfEditText);
         emailEditText = findViewById(R.id.emailEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
@@ -63,10 +67,16 @@ public class EditStudentActivity extends AppCompatActivity {
         loadCourses();
 
         if (student != null) {
+            textId.setText("Matrícula: " + student.getId());
             nameEditText.setText(student.getName());
-            cpfEditText.setText(student.getCpf());
+            cpfEditText.setText(EGradeUtil.formatCpf(student.getCpf()));
             emailEditText.setText(student.getEmail());
-            phoneEditText.setText(student.getPhoneNumber());
+            phoneEditText.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
+            birthDateEditText.setText(EGradeUtil.dateToString(student.getBirthDate()));
+
+            if (student.getProfilePicture() != null) {
+                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
+            }
         } else {
             deleteButton.setEnabled(false);
             deleteButton.setVisibility(View.INVISIBLE);

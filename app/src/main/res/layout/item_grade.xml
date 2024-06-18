@@ -1,49 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:padding="8dp"
-    android:background="#FFFFFF">
+    android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/textViewSubject"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"/>
+        android:text="Nome da Disciplina"
+        android:textStyle="bold"
+        android:textColor="#E00051"
+        android:textSize="18sp"
+        android:paddingStart="8dp"
+        android:paddingBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/textViewAbsence"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
+        android:layout_below="@id/textViewSubject"
+        android:orientation="vertical"
+        android:paddingStart="8dp">
 
-    <TextView
-        android:id="@+id/textViewGrade"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
+        <TextView
+            android:id="@+id/textViewProfessor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Professor:"
+            android:textColor="#757575"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/btnInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:padding="8dp"
-        android:textSize="16sp"
-        android:backgroundTint="@color/pink"
-        android:textColor="@color/white"
-        android:gravity="center" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/textViewAbsence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Faltas:"
+            android:textColor="#757575"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/textViewGrade"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nota:"
+            android:textColor="#757575"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

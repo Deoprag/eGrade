@@ -1,4 +1,3 @@
-<!-- res/layout/item_student.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -85,5 +84,6 @@
         android:layout_height="wrap_content"
         android:text="Editar"
         android:background="?attr/selectableItemBackground"
-        android:textColor="#E00051" />
+        android:textColor="#E00051"
+        />
 </LinearLayout>

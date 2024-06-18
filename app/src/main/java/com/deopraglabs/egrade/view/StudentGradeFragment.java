@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -50,6 +51,17 @@ public class StudentGradeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_grade, container, false);
 
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            default:
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+                break;
+        }
+
         gradeList = view.findViewById(R.id.gradeList);
 
         if (student.getGrades() != null) {
@@ -60,15 +72,15 @@ public class StudentGradeFragment extends Fragment {
                 public View getView(int position, View convertView, ViewGroup parent) {
                     View view = super.getView(position, convertView, parent);
                     final TextView textViewSubject = view.findViewById(R.id.textViewSubject);
+                    final TextView textViewProfessor = view.findViewById(R.id.textViewProfessor);
                     final TextView textViewAbscence = view.findViewById(R.id.textViewAbsence);
                     final TextView textViewGrade = view.findViewById(R.id.textViewGrade);
-                    final Button btnInfo = view.findViewById(R.id.btnInfo);
 
                     final Grade grade = grades.get(position);
                     textViewSubject.setText(grade.getSubject().getName());
-                    textViewAbscence.setText("4");
-                    final float finalGrade = (grade.getN1() + grade.getN2()) / 2;
-                    textViewGrade.setText(String.format("%.1f", finalGrade));
+                    textViewProfessor.setText("Professor: " + grade.getSubject().getProfessor().getName());
+                    textViewAbscence.setText("Faltas: 4");
+                    textViewGrade.setText(String.format("Nota: %.1f", (grade.getN1() + grade.getN2()) / 2));
 
                     return view;
                 }

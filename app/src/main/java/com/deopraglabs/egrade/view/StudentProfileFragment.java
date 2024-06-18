@@ -1,8 +1,6 @@
 package com.deopraglabs.egrade.view;
 
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,10 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Student;
@@ -54,6 +50,17 @@ public class StudentProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_student_profile, container, false);
 
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            default:
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+                break;
+        }
+
         id = view.findViewById(R.id.id);
         birthDate = view.findViewById(R.id.birthDate);
         course = view.findViewById(R.id.course);
@@ -62,15 +69,14 @@ public class StudentProfileFragment extends Fragment {
         profileImage = view.findViewById(R.id.profileImage);
         btnEditData = view.findViewById(R.id.btnEditData);
 
-        id.setText("Matrícula: " + student.getId());
-        birthDate.setText("Nascimento: " + EGradeUtil.dateToString(student.getBirthDate()));
-        course.setText("Curso: " + student.getCourse().getName());
-        email.setText("Email: " + student.getEmail());
-        phoneNumber.setText("Celular " + EGradeUtil.formatNumber(student.getPhoneNumber()));
+        id.setText(String.valueOf(student.getId()));
+        birthDate.setText(EGradeUtil.dateToString(student.getBirthDate()));
+        course.setText(student.getCourse().getName());
+        email.setText(student.getEmail());
+        phoneNumber.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
+
         if (student.getProfilePicture() != null) {
             profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
-        } else {
-            profileImage.setImageResource(R.drawable.profile_icon);
         }
 
         return view;

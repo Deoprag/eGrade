@@ -20,6 +20,17 @@
             android:contentDescription="Foto de Perfil"
             android:src="@drawable/ic_profile_placeholder" />
 
+        <TextView
+            android:id="@+id/textId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Matrícula: "
+            android:textColor="@color/pink"
+            android:layout_gravity="center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameInputLayout"
             android:layout_width="match_parent"
@@ -95,7 +106,6 @@
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Spinner for course selection -->
         <Spinner
             android:id="@+id/courseSpinner"
             android:layout_width="match_parent"

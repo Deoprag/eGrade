@@ -17,11 +17,11 @@ import java.util.Random;
 
 public class EGradeUtil {
 
-//    public static final String URL = "http://192.168.1.41:8080";
+    //    public static final String URL = "http://192.168.1.41:8080";
     public static final String URL = "http://192.168.1.10:8080";
 
     public static String formatCpf(String oldCpf) {
-        return String.format(oldCpf, oldCpf.substring(0, 2)+ "." +  oldCpf.substring(3, 5) + "." + oldCpf.substring(6, 8) + "-" +  oldCpf.substring(9, 10));
+        return oldCpf.substring(0, 3) + '.' + oldCpf.substring(3, 6) + '.' + oldCpf.substring(6, 9) + '-' + oldCpf.substring(9);
     }
 
     public static Date localDateToDate(LocalDate localDate) {
@@ -30,8 +30,15 @@ public class EGradeUtil {
 
     public static String formatNumber(String numero) {
         String ddd = numero.substring(0, 2);
-        String parte1 = numero.substring(2, 7);
-        String parte2 = numero.substring(7);
+        String parte1 = "";
+        String parte2 = "";
+        if (numero.length() > 10) {
+            parte1 = numero.substring(2, 7);
+            parte2 = numero.substring(7);
+        } else {
+            parte1 = numero.substring(2, 6);
+            parte2 = numero.substring(6);
+        }
 
         return String.format("(%s) %s-%s", ddd, parte1, parte2);
     }
