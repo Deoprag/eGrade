@@ -1,91 +1,139 @@
-<!-- res/layout/activity_edit_student.xml -->
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context="view.EditStudentActivity">
+    tools:context=".view.EditStudentActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_gravity="center">
 
         <ImageView
             android:id="@+id/profileImageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center"
             android:contentDescription="Foto de Perfil"
             android:src="@drawable/ic_profile_placeholder" />
 
-        <EditText
-            android:id="@+id/nameEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nome"
-            android:inputType="textPersonName"
-            style="@style/EditTextStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
-        <EditText
-            android:id="@+id/cpfEditText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cpfInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="CPF"
-            android:inputType="number"
-            style="@style/EditTextStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
-        <EditText
-            android:id="@+id/emailEditText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cpfEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:inputType="textEmailAddress"
-            style="@style/EditTextStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
-        <EditText
-            android:id="@+id/phoneEditText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/phoneInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Telefone"
-            android:inputType="phone"
-            style="@style/EditTextStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
 
-        <EditText
-            android:id="@+id/birthDateEditText"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/phoneEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/birthDateInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Data de Nascimento"
-            android:inputType="date"
-            style="@style/EditTextStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/birthDateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Spinner for course selection -->
         <Spinner
             android:id="@+id/courseSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SpinnerStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <CheckBox
             android:id="@+id/activeCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ativo"
-            style="@style/CheckBoxStyle" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <Button
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Salvar"
-            style="@style/ButtonStyle" />
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#34eb55"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         <Button
             android:id="@+id/deleteButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Excluir"
-            style="@style/ButtonStyle" />
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#eb3434"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     </LinearLayout>
 </ScrollView>

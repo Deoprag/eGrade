@@ -1,6 +1,7 @@
 package com.deopraglabs.egrade.view;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,10 +59,9 @@ public class CoordinatorStudentsFragment extends Fragment {
             coordinator = (Coordinator) getArguments().getSerializable("user");
         }
 
-        Log.e("MERDAAAAAAAA", String.valueOf(coordinator));
-
         studentList = new ArrayList<>();
         courseList = new ArrayList<>();
+
         adapter = new StudentAdapter(getActivity(), studentList, new StudentAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Student student) {
@@ -80,20 +80,34 @@ public class CoordinatorStudentsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coordinator_students, container, false);
 
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Modo escuro
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            default:
+                // Modo claro
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+                break;
+        }
+
         recyclerView = view.findViewById(R.id.recyclerViewStudents);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         courseSpinner = view.findViewById(R.id.courseSpinner);
 
-        Button addStudentButton = view.findViewById(R.id.addStudentButton);
-        addStudentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button addStudentButton = view.findViewById(R.id.addStudentButton);
+//        addStudentButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
+//                intent.putExtra("coordinator", coordinator);
+//                startActivity(intent);
+//            }
+//        });
 
         setupCourseSpinner();
 
@@ -107,8 +121,8 @@ public class CoordinatorStudentsFragment extends Fragment {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                final Gson gson = new Gson();
-                Type courseListType = new TypeToken<List<Course>>(){}.getType();
+                Gson gson = new Gson();
+                Type courseListType = new TypeToken<List<Course>>() {}.getType();
                 courseList = gson.fromJson(response, courseListType);
 
                 requireActivity().runOnUiThread(new Runnable() {
@@ -144,21 +158,44 @@ public class CoordinatorStudentsFragment extends Fragment {
         courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Course selectedCourse = courseList.get(position); // Obtém o curso completo se necessário
+                Course selectedCourse = courseList.get(position);
                 loadStudentsByCourse(selectedCourse);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Implementação opcional
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
-
     private void loadStudentsByCourse(Course course) {
-        // Aqui você implementa a lógica para carregar os estudantes do curso selecionado
-        // Você pode fazer uma nova requisição HTTP ou filtrar a lista existente de estudantes
-        // de acordo com o curso selecionado
+        final String url = EGradeUtil.URL + "/api/v1/student/findAllByCourse/" + course.getId();
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta Estudantes", response);
+                Gson gson = new Gson();
+                Type studentListType = new TypeToken<List<Student>>() {}.getType();
+                List<Student> students = gson.fromJson(response, studentListType);
+
+                requireActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (students != null) {
+                            studentList.clear();
+                            studentList.addAll(students);
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Log.e("Erro", "Lista de estudantes retornada é nula");
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
     }
 }

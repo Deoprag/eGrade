@@ -17,7 +17,8 @@ import java.util.Random;
 
 public class EGradeUtil {
 
-    public static final String URL = "http://192.168.1.41:8080";
+//    public static final String URL = "http://192.168.1.41:8080";
+    public static final String URL = "http://192.168.1.10:8080";
 
     public static String formatCpf(String oldCpf) {
         return String.format(oldCpf, oldCpf.substring(0, 2)+ "." +  oldCpf.substring(3, 5) + "." + oldCpf.substring(6, 8) + "-" +  oldCpf.substring(9, 10));

@@ -1,6 +1,9 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,11 +20,10 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
-import com.deopraglabs.egrade.model.User;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -43,8 +44,11 @@ public class EditStudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_student);
 
-        student = (Student) getIntent().getSerializableExtra("student");
-        coordinator = (Coordinator) getIntent().getSerializableExtra("coordinator");
+        Intent intent = getIntent();
+        if (intent != null) {
+            student = (Student) intent.getSerializableExtra("student");
+            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+        }
 
         nameEditText = findViewById(R.id.nameEditText);
         cpfEditText = findViewById(R.id.cpfEditText);
@@ -63,7 +67,9 @@ public class EditStudentActivity extends AppCompatActivity {
             cpfEditText.setText(student.getCpf());
             emailEditText.setText(student.getEmail());
             phoneEditText.setText(student.getPhoneNumber());
-            // Set other fields as needed
+        } else {
+            deleteButton.setEnabled(false);
+            deleteButton.setVisibility(View.INVISIBLE);
         }
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +84,120 @@ public class EditStudentActivity extends AppCompatActivity {
             public void onClick(View v) {
                 saveStudent();
             }
+        });
+
+        // Adicionando os TextWatchers para formatação
+        cpfEditText.addTextChangedListener(new TextWatcher() {
+            private boolean isUpdating = false;
+            private String old = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isUpdating) {
+                    isUpdating = false;
+                    return;
+                }
+
+                boolean hasMask = s.toString().indexOf('.') > -1 || s.toString().indexOf('-') > -1;
+                String str = s.toString().replaceAll("[.]", "").replaceAll("[-]", "");
+
+                if (count > before) {
+                    if (str.length() > 11) {
+                        str = str.substring(0, 3) + '.' + str.substring(3, 6) + '.' + str.substring(6, 9) + '-' + str.substring(9, str.length() - 1);
+                    } else if (str.length() > 9) {
+                        str = str.substring(0, 3) + '.' + str.substring(3, 6) + '.' + str.substring(6, 9) + '-' + str.substring(9);
+                    } else if (str.length() > 6) {
+                        str = str.substring(0, 3) + '.' + str.substring(3, 6) + '.' + str.substring(6);
+                    } else if (str.length() > 3) {
+                        str = str.substring(0, 3) + '.' + str.substring(3);
+                    }
+                    isUpdating = true;
+                    cpfEditText.setText(str);
+                    cpfEditText.setSelection(cpfEditText.getText().length());
+                } else {
+                    old = s.toString();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        phoneEditText.addTextChangedListener(new TextWatcher() {
+            private boolean isUpdating = false;
+            private String old = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isUpdating) {
+                    isUpdating = false;
+                    return;
+                }
+
+                String str = s.toString().replaceAll("[()]", "").replaceAll("[-]", "").replaceAll("[ ]", "");
+
+                if (count > before) {
+                    if (str.length() > 11) {
+                        str = '(' + str.substring(0, 2) + ") " + str.substring(2, 7) + '-' + str.substring(7, str.length() - 1);
+                    } else if (str.length() > 10) {
+                        str = '(' + str.substring(0, 2) + ") " + str.substring(2, 7) + '-' + str.substring(7);
+                    } else if (str.length() > 6) {
+                        str = '(' + str.substring(0, 2) + ") " + str.substring(2, 6) + '-' + str.substring(6);
+                    } else if (str.length() > 2) {
+                        str = '(' + str.substring(0, 2) + ") " + str.substring(2);
+                    }
+                    isUpdating = true;
+                    phoneEditText.setText(str);
+                    phoneEditText.setSelection(phoneEditText.getText().length());
+                } else {
+                    old = s.toString();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        birthDateEditText.addTextChangedListener(new TextWatcher() {
+            private boolean isUpdating = false;
+            private String old = "";
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (isUpdating) {
+                    isUpdating = false;
+                    return;
+                }
+
+                String str = s.toString().replaceAll("[/]", "");
+
+                if (count > before) {
+                    if (str.length() > 8) {
+                        str = str.substring(0, 2) + '/' + str.substring(2, 4) + '/' + str.substring(4, str.length() - 1);
+                    } else if (str.length() > 4) {
+                        str = str.substring(0, 2) + '/' + str.substring(2, 4) + '/' + str.substring(4);
+                    } else if (str.length() > 2) {
+                        str = str.substring(0, 2) + '/' + str.substring(2);
+                    }
+                    isUpdating = true;
+                    birthDateEditText.setText(str);
+                    birthDateEditText.setSelection(birthDateEditText.getText().length());
+                } else {
+                    old = s.toString();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -140,17 +260,5 @@ public class EditStudentActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-    }
-
-    private List<Course> parseCoursesFromResponse(String response) {
-        final Gson gson = new Gson();
-        final Type courseListType = new TypeToken<List<Course>>(){}.getType();
-        return gson.fromJson(response, courseListType);
-    }
-
-    private void updateCourseSpinner(List<Course> courses) {
-        ArrayAdapter<Course> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, courses);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(adapter);
     }
 }
