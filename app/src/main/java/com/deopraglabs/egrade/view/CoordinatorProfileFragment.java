@@ -25,10 +25,7 @@ public class CoordinatorProfileFragment extends Fragment {
 
     private Coordinator coordinator;
 
-    private TextView id;
-    private TextView birthDate;
-    private TextView email;
-    private TextView phoneNumber;
+    private TextView id, name, birthDate, email, phoneNumber;
     private ImageView profileImage;
 
     private Button btnEditData;
@@ -66,6 +63,7 @@ public class CoordinatorProfileFragment extends Fragment {
         }
 
         id = view.findViewById(R.id.id);
+        name = view.findViewById(R.id.name);
         birthDate = view.findViewById(R.id.birthDate);
         email = view.findViewById(R.id.email);
         phoneNumber = view.findViewById(R.id.phoneNumber);
@@ -73,6 +71,7 @@ public class CoordinatorProfileFragment extends Fragment {
         btnEditData = view.findViewById(R.id.btnEditData);
 
         id.setText(String.valueOf(coordinator.getId()));
+        name.setText(coordinator.getName());
         birthDate.setText(EGradeUtil.dateToString(coordinator.getBirthDate()));
         email.setText(coordinator.getEmail());
         phoneNumber.setText(EGradeUtil.formatNumber(coordinator.getPhoneNumber()));

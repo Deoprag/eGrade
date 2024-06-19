@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.EGradeUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -45,13 +46,10 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         Student student = studentList.get(position);
 
         holder.nameTextView.setText(student.getName());
-        holder.cpfTextView.setText(student.getCpf());
+        holder.cpfTextView.setText(EGradeUtil.formatCpf(student.getCpf()));
         holder.emailTextView.setText(student.getEmail());
-        holder.phoneTextView.setText(student.getPhoneNumber());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String birthDate = sdf.format(student.getBirthDate());
-        holder.birthDateTextView.setText(birthDate);
+        holder.phoneTextView.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
+        holder.birthDateTextView.setText(EGradeUtil.dateToString(student.getBirthDate()));
 
         holder.courseTextView.setText(student.getCourse().getName());
 

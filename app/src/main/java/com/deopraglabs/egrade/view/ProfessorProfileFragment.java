@@ -20,10 +20,7 @@ public class ProfessorProfileFragment extends Fragment {
 
     private Professor professor;
 
-    private TextView id;
-    private TextView birthDate;
-    private TextView email;
-    private TextView phoneNumber;
+    private TextView id, name, birthDate, email, phoneNumber;
     private ImageView profileImage;
 
     private Button btnEditData;
@@ -60,7 +57,8 @@ public class ProfessorProfileFragment extends Fragment {
                 break;
         }
 
-//        id = view.findViewById(R.id.id);
+        id = view.findViewById(R.id.id);
+        name = view.findViewById(R.id.name);
         birthDate = view.findViewById(R.id.birthDate);
         email = view.findViewById(R.id.email);
         phoneNumber = view.findViewById(R.id.phoneNumber);
@@ -68,6 +66,7 @@ public class ProfessorProfileFragment extends Fragment {
         btnEditData = view.findViewById(R.id.btnEditData);
 
         id.setText(String.valueOf(professor.getId()));
+        name.setText(professor.getName());
         birthDate.setText(EGradeUtil.dateToString(professor.getBirthDate()));
         email.setText(professor.getEmail());
         phoneNumber.setText(EGradeUtil.formatNumber(professor.getPhoneNumber()));

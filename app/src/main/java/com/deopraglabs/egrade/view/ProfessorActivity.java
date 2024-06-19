@@ -32,17 +32,19 @@ public class ProfessorActivity extends AppCompatActivity {
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            Fragment selectedFragment;
 
-            if (item.getItemId() == R.id.professor_courses) {
-                replaceFragment(new ProfessorCoursesFragment());
-            } else if (item.getItemId() == R.id.professor_solicitations) {
-                replaceFragment(new ProfessorSolicitationFragment());
+            if (item.getItemId() == R.id.professor_solicitations) {
+                selectedFragment = ProfessorSolicitationFragment.newInstance(professor);
+            } else if (item.getItemId() == R.id.professor_courses) {
+                selectedFragment = ProfessorCourseFragment.newInstance(professor);
             } else if (item.getItemId() == R.id.professor_profile) {
-                replaceFragment(new ProfessorProfileFragment());
+                selectedFragment = ProfessorProfileFragment.newInstance(professor);
             } else {
-                replaceFragment(new ProfessorHomeFragment());
+                selectedFragment = new ProfessorHomeFragment();
             }
 
+            replaceFragment(selectedFragment);
             return true;
         });
     }

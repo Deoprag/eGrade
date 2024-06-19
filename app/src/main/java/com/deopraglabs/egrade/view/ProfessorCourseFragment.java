@@ -9,15 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Professor;
 
-public class ProfessorCoursesFragment extends Fragment {
+public class ProfessorCourseFragment extends Fragment {
 
     private Professor professor;
 
-    public static ProfessorCoursesFragment newInstance(Professor professor) {
-        ProfessorCoursesFragment fragment = new ProfessorCoursesFragment();
+    public static ProfessorCourseFragment newInstance(Professor professor) {
+        ProfessorCourseFragment fragment = new ProfessorCourseFragment();
         Bundle args = new Bundle();
 
         fragment.setArguments(args);
