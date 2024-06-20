@@ -2,15 +2,14 @@ package com.deopraglabs.egrade.view;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Professor;
@@ -72,7 +71,7 @@ public class ProfessorProfileFragment extends Fragment {
         phoneNumber.setText(EGradeUtil.formatNumber(professor.getPhoneNumber()));
 
         if (professor.getProfilePicture() != null) {
-            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(professor.getProfilePicture()));
+            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(professor.getProfilePicture().getBytes()));
         }
 
         return view;

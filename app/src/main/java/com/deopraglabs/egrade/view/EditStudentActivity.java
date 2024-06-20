@@ -102,7 +102,7 @@ public class EditStudentActivity extends AppCompatActivity {
             genderSpinner.setSelection(student.getGender().equals(Gender.M) ? 0 : student.getGender().equals(Gender.F) ? 1 : 2);
 
             if (student.getProfilePicture() != null) {
-                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
+                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
             }
         } else {
             textId.setVisibility(View.INVISIBLE);

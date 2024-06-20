@@ -1,21 +1,15 @@
 package com.deopraglabs.egrade.view;
 
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
@@ -77,7 +71,7 @@ public class CoordinatorProfileFragment extends Fragment {
         phoneNumber.setText(EGradeUtil.formatNumber(coordinator.getPhoneNumber()));
 
         if (coordinator.getProfilePicture() != null) {
-            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(coordinator.getProfilePicture()));
+            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(coordinator.getProfilePicture().getBytes()));
         }
 
         return view;

@@ -1,7 +1,6 @@
 package com.deopraglabs.egrade.model;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.util.Date;
 
 import lombok.Data;
@@ -16,7 +15,7 @@ public class User implements Serializable {
     private String phoneNumber;
     private Gender gender;
     private Date birthDate;
-    private byte[] profilePicture;
+    private String profilePicture;
     private String password;
     private boolean active = false;
     private Role role;

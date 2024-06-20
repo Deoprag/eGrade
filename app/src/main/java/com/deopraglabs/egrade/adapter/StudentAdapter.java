@@ -7,16 +7,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
+
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {
 
@@ -50,17 +49,12 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         holder.emailTextView.setText(student.getEmail());
         holder.phoneTextView.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
         holder.birthDateTextView.setText(EGradeUtil.dateToString(student.getBirthDate()));
-
         holder.courseTextView.setText(student.getCourse().getName());
-
         holder.activeTextView.setText(student.isActive() ? "Ativo" : "Inativo");
-
-        Glide.with(context)
-                .load(student.getProfilePicture())
-                .placeholder(R.drawable.ic_profile_placeholder)
-                .into(holder.profileImageView);
-
-        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(student));
+        if (student.getProfilePicture() != null) {
+            holder.profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
+        }
+//        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(student));
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(student));
     }
 
