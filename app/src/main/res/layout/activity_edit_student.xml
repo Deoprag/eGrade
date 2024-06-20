@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     tools:context=".view.EditStudentActivity">
 
@@ -16,7 +17,7 @@
             android:id="@+id/profileImageView"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="150dp"
             android:layout_gravity="center"
             android:contentDescription="Foto de Perfil"
             android:src="@drawable/ic_profile_placeholder" />
@@ -115,7 +116,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password"
+                android:id="@+id/passwordEditText"
                 android:textColor="@color/light_black"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"

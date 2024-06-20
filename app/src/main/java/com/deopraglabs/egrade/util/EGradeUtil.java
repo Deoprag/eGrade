@@ -3,22 +3,16 @@ package com.deopraglabs.egrade.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.io.*;
-import java.sql.*;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Base64;
 import java.util.Date;
-import java.util.Random;
 
 public class EGradeUtil {
 
-    public static final String URL = "http://10.30.9.230:8080";
-//    public static final String URL = "http://192.168.1.41:8080";
+//    public static final String URL = "http://10.30.9.230:8080";
+    public static final String URL = "http://192.168.1.41:8080";
 //    public static final String URL = "http://192.168.1.10:8080";
 
     public static String formatCpf(String oldCpf) {
@@ -53,20 +47,9 @@ public class EGradeUtil {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
 
-    public static FileInputStream convertFromBlob(Blob image) throws Exception {
-        File tempFile = File.createTempFile("tempfile", null);
-        try (InputStream inputStream = image.getBinaryStream();
-             FileOutputStream outputStream = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            return new FileInputStream(tempFile);
-        } catch (Exception e) {
-            tempFile.delete();
-            throw e;
-        }
+    public static byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
     }
-
 }

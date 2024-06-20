@@ -1,9 +1,15 @@
 package com.deopraglabs.egrade.view;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,8 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
@@ -26,8 +35,8 @@ import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +44,10 @@ import java.util.List;
 import java.util.Map;
 
 public class EditStudentActivity extends AppCompatActivity {
+
+    private static final int REQUEST_READ_PERMISSION = 1;
+    private static final int PICK_IMAGE_REQUEST = 2;
+
     private Student student;
     private Coordinator coordinator;
 
@@ -47,6 +60,7 @@ public class EditStudentActivity extends AppCompatActivity {
     private List<Course> courseList;
     private Course selectedCourse;
     private Gender selectedGender;
+    private Bitmap selectedPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +89,7 @@ public class EditStudentActivity extends AppCompatActivity {
 
         loadCourses();
         setupGenderSpinner();
+        requestStoragePermission();
 
         if (student != null) {
             textId.setText("Matrícula: " + student.getId());
@@ -84,28 +99,20 @@ public class EditStudentActivity extends AppCompatActivity {
             phoneEditText.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
             birthDateEditText.setText(EGradeUtil.dateToString(student.getBirthDate()));
             activeCheckBox.setChecked(student.isActive());
+            genderSpinner.setSelection(student.getGender().equals(Gender.M) ? 0 : student.getGender().equals(Gender.F) ? 1 : 2);
 
             if (student.getProfilePicture() != null) {
                 profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
             }
         } else {
+            textId.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
             deleteButton.setVisibility(View.INVISIBLE);
         }
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteStudent();
-            }
-        });
+        deleteButton.setOnClickListener(v -> deleteStudent());
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveStudent();
-            }
-        });
+        saveButton.setOnClickListener(v -> saveStudent());
 
         cpfEditText.addTextChangedListener(new TextWatcher() {
 
@@ -113,7 +120,8 @@ public class EditStudentActivity extends AppCompatActivity {
             private String old = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -152,7 +160,8 @@ public class EditStudentActivity extends AppCompatActivity {
             private String old = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -182,7 +191,8 @@ public class EditStudentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         birthDateEditText.addTextChangedListener(new TextWatcher() {
@@ -190,7 +200,8 @@ public class EditStudentActivity extends AppCompatActivity {
             private String old = "";
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -218,8 +229,22 @@ public class EditStudentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
+
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openImageChooser();
+            }
+        });
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
     private void deleteStudent() {
@@ -228,6 +253,14 @@ public class EditStudentActivity extends AppCompatActivity {
     }
 
     private void saveStudent() {
+        if (student == null) {
+            registerStudent();
+        } else {
+            updateStudent();
+        }
+    }
+
+    private void registerStudent() {
         final String url = EGradeUtil.URL + "/api/v1/student/save";
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
@@ -236,35 +269,70 @@ public class EditStudentActivity extends AppCompatActivity {
                 "email", emailEditText.getText().toString(),
                 "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
                 "birthDate", birthDateEditText.getText().toString(),
-                "password", "",
+                "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "course", String.valueOf(selectedCourse.getId())
+                "course", String.valueOf(selectedCourse.getId()),
+                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
         );
+
         HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                final Gson gson = new Gson();
-                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>(){}.getType();
-                courseList = gson.fromJson(response, courseListType);
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setupCourseSpinner();
-                        courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
+                        Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
             }
 
             @Override
             public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
-        finish();
+        });
     }
 
-    private void loadCourses() {
+    private void updateStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/student/update";
+        final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(student.getId()),
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "course", String.valueOf(selectedCourse.getId()),
+                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
+        );
+
+        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void loadCourses () {
         final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
@@ -272,14 +340,17 @@ public class EditStudentActivity extends AppCompatActivity {
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
                 final Gson gson = new Gson();
-                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>(){}.getType();
+                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>() {
+                }.getType();
                 courseList = gson.fromJson(response, courseListType);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setupCourseSpinner();
-                        courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
+                        if (student != null) {
+                            courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
+                        }
                     }
                 });
             }
@@ -291,7 +362,7 @@ public class EditStudentActivity extends AppCompatActivity {
         });
     }
 
-    private void setupCourseSpinner() {
+    private void setupCourseSpinner () {
         if (courseList == null) {
             return;
         }
@@ -313,11 +384,12 @@ public class EditStudentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
     }
 
-    private void setupGenderSpinner() {
+    private void setupGenderSpinner () {
         final Map<Gender, String> genderMap = new HashMap<>();
         genderMap.put(Gender.M, "Masculino");
         genderMap.put(Gender.F, "Feminino");
@@ -340,7 +412,31 @@ public class EditStudentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
+    }
+
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_PERMISSION);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                selectedPhoto = bitmap;
+                profileImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

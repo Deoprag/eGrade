@@ -30,14 +30,15 @@
             android:layout_marginBottom="16dp"
             style="@style/SpinnerStyle" />
 
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/addStudentButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Adicionar Estudante"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:onClick="onAddStudentClick"/>-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addStudentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adicionar Estudante"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="30dp"
+            android:onClick="onAddStudentClick"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewStudents"

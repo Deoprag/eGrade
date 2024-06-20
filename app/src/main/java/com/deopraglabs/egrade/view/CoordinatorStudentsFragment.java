@@ -97,15 +97,15 @@ public class CoordinatorStudentsFragment extends Fragment {
 
         courseSpinner = view.findViewById(R.id.courseSpinner);
 
-//        Button addStudentButton = view.findViewById(R.id.addStudentButton);
-//        addStudentButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
-//                intent.putExtra("coordinator", coordinator);
-//                startActivity(intent);
-//            }
-//        });
+        Button addStudentButton = view.findViewById(R.id.addStudentButton);
+        addStudentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
+                intent.putExtra("coordinator", coordinator);
+                startActivity(intent);
+            }
+        });
 
         setupCourseSpinner();
 
