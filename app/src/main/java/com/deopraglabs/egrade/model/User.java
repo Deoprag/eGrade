@@ -14,6 +14,7 @@ public class User implements Serializable {
     private String cpf;
     private String email;
     private String phoneNumber;
+    private Gender gender;
     private Date birthDate;
     private byte[] profilePicture;
     private String password;

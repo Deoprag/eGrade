@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
+import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
@@ -28,19 +30,23 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EditStudentActivity extends AppCompatActivity {
     private Student student;
     private Coordinator coordinator;
 
     private TextView textId;
-    private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText;
+    private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText, passwordEditText;
     private ImageView profileImageView;
     private Button deleteButton, saveButton;
-    private Spinner courseSpinner;
+    private CheckBox activeCheckBox;
+    private Spinner courseSpinner, genderSpinner;
     private List<Course> courseList;
     private Course selectedCourse;
+    private Gender selectedGender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +69,12 @@ public class EditStudentActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         saveButton = findViewById(R.id.saveButton);
         courseSpinner = findViewById(R.id.courseSpinner);
+        genderSpinner = findViewById(R.id.genderSpinner);
+        activeCheckBox = findViewById(R.id.activeCheckBox);
+        passwordEditText = findViewById(R.id.passwordEditText);
 
         loadCourses();
+        setupGenderSpinner();
 
         if (student != null) {
             textId.setText("Matrícula: " + student.getId());
@@ -73,6 +83,7 @@ public class EditStudentActivity extends AppCompatActivity {
             emailEditText.setText(student.getEmail());
             phoneEditText.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
             birthDateEditText.setText(EGradeUtil.dateToString(student.getBirthDate()));
+            activeCheckBox.setChecked(student.isActive());
 
             if (student.getProfilePicture() != null) {
                 profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture()));
@@ -96,8 +107,8 @@ public class EditStudentActivity extends AppCompatActivity {
             }
         });
 
-        // Adicionando os TextWatchers para formatação
         cpfEditText.addTextChangedListener(new TextWatcher() {
+
             private boolean isUpdating = false;
             private String old = "";
 
@@ -212,12 +223,45 @@ public class EditStudentActivity extends AppCompatActivity {
     }
 
     private void deleteStudent() {
-        // Implement delete logic here
+
         finish();
     }
 
     private void saveStudent() {
-        // Implement save logic here
+        final String url = EGradeUtil.URL + "/api/v1/student/save";
+        final String body = HttpUtil.generateRequestBody(
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "password", "",
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "course", String.valueOf(selectedCourse.getId())
+        );
+        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                final Gson gson = new Gson();
+                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>(){}.getType();
+                courseList = gson.fromJson(response, courseListType);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupCourseSpinner();
+                        courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        finish();
     }
 
     private void loadCourses() {
@@ -235,6 +279,7 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         setupCourseSpinner();
+                        courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
                     }
                 });
             }
@@ -265,6 +310,33 @@ public class EditStudentActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedCourse = courseList.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private void setupGenderSpinner() {
+        final Map<Gender, String> genderMap = new HashMap<>();
+        genderMap.put(Gender.M, "Masculino");
+        genderMap.put(Gender.F, "Feminino");
+        genderMap.put(Gender.O, "Outro");
+
+        List<String> genderDescriptions = new ArrayList<>();
+        for (Gender gender : Gender.values()) {
+            genderDescriptions.add(genderMap.get(gender));
+        }
+
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, genderDescriptions);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
+
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGender = Gender.values()[position];
             }
 
             @Override

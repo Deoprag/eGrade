@@ -16,6 +16,7 @@
             android:id="@+id/profileImageView"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            android:layout_marginTop="60dp"
             android:layout_gravity="center"
             android:contentDescription="Foto de Perfil"
             android:src="@drawable/ic_profile_placeholder" />
@@ -106,20 +107,45 @@
                 android:inputType="date" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Senha"
+            app:passwordToggleEnabled="true"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:textColor="@color/light_black"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Spinner
             android:id="@+id/courseSpinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"
+            android:prompt="@string/course_prompt"/>
+
+        <Spinner
+            android:id="@+id/genderSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:prompt="@string/gender_prompt"/>
 
         <CheckBox
             android:id="@+id/activeCheckBox"
+            android:buttonTint="@color/pink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ativo"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp" />
+            android:paddingBottom="8dp"/>
 
         <Button
             android:id="@+id/saveButton"
