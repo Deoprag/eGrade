@@ -152,7 +152,8 @@ public class EditStudentActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
         });
 
         phoneEditText.addTextChangedListener(new TextWatcher() {
@@ -248,8 +249,27 @@ public class EditStudentActivity extends AppCompatActivity {
     }
 
     private void deleteStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/student/delete/" + student.getId();
 
-        finish();
+        HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Usuário deletado com sucesso!", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao deletar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
     }
 
     private void saveStudent() {
@@ -311,7 +331,7 @@ public class EditStudentActivity extends AppCompatActivity {
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
         );
 
-        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
@@ -326,13 +346,13 @@ public class EditStudentActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao atualizar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
     }
 
-    private void loadCourses () {
+    private void loadCourses() {
         final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
@@ -362,7 +382,7 @@ public class EditStudentActivity extends AppCompatActivity {
         });
     }
 
-    private void setupCourseSpinner () {
+    private void setupCourseSpinner() {
         if (courseList == null) {
             return;
         }
@@ -389,7 +409,7 @@ public class EditStudentActivity extends AppCompatActivity {
         });
     }
 
-    private void setupGenderSpinner () {
+    private void setupGenderSpinner() {
         final Map<Gender, String> genderMap = new HashMap<>();
         genderMap.put(Gender.M, "Masculino");
         genderMap.put(Gender.F, "Feminino");

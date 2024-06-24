@@ -54,7 +54,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         if (student.getProfilePicture() != null) {
             holder.profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
         }
-//        holder.itemView.setOnClickListener(v -> onItemClickListener.onItemClick(student));
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(student));
     }
 
