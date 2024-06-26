@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_student"
+        android:title="Aluno"/>
+    <item
+        android:id="@+id/menu_professor"
+        android:title="Professor"/>
+    <item
+        android:id="@+id/menu_coordinator"
+        android:title="Coordenador"/>
+    <item
+        android:id="@+id/menu_subject"
+        android:title="Matéria"/>
+    <item
+        android:id="@+id/menu_course"
+        android:title="Curso"/>
+</menu>

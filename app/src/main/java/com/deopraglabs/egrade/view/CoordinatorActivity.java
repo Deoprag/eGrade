@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityCoordinatorBinding;
 import com.deopraglabs.egrade.model.Coordinator;
-import com.deopraglabs.egrade.model.Student;
 
 public class CoordinatorActivity extends AppCompatActivity {
 
@@ -24,6 +23,7 @@ public class CoordinatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCoordinatorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.bottomAppBar);
 
         final Intent intent = getIntent();
         coordinator = (Coordinator) intent.getSerializableExtra("user");
@@ -40,6 +40,8 @@ public class CoordinatorActivity extends AppCompatActivity {
                 selectedFragment = CoordinatorCourseFragment.newInstance(coordinator);
             } else if (item.getItemId() == R.id.coordinator_profile) {
                 selectedFragment = CoordinatorProfileFragment.newInstance(coordinator);
+            } else if (item.getItemId() == R.id.coordinator_register) {
+                selectedFragment = CoordinatorRegisterFragment.newInstance(coordinator);
             } else {
                 selectedFragment = new CoordinatorHomeFragment();
             }

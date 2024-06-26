@@ -8,13 +8,13 @@
 
     <item
         android:id="@+id/coordinator_classes"
-        android:title="Turmas"
+        android:title="Alunos"
         android:icon="@drawable/people_24"/>
 
     <item
-        android:id="@+id/fab"
-        android:title=""
-        android:enabled="false"/>
+        android:id="@+id/coordinator_register"
+        android:title="Cadastro"
+        android:icon="@drawable/sharp_calendar_24"/>
 
     <item
         android:id="@+id/coordinator_courses"
