@@ -23,6 +23,9 @@
             android:name=".view.EditProfessorActivity"
             android:exported="false" />
         <activity
+            android:name=".view.EditCoordinatorActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.StudentActivity"
             android:exported="false" />
         <activity

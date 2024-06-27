@@ -33,13 +33,4 @@
 
     </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/white"
-        android:src="@drawable/add_24"
-        app:layout_anchor="@id/bottomAppBar"
-        app:maxImageSize="40dp"
-        app:tint ="@color/pink"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

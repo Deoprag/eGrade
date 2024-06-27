@@ -48,14 +48,13 @@ public class CoordinatorRegisterPeopleFragment extends Fragment {
                 break;
         }
 
-        // Setting click listeners for each card
         CardView cardViewCoordenador = view.findViewById(R.id.cardViewCoordenador);
         cardViewCoordenador.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), activity_edit_coordinador.class);
-//                intent.putExtra("user", coordinator);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), EditCoordinatorActivity.class);
+                intent.putExtra("coordinator", coordinator);
+                startActivity(intent);
             }
         });
 

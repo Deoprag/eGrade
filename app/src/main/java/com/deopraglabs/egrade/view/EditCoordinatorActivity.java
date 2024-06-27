@@ -28,41 +28,48 @@ import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
-import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
+import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class EditProfessorActivity extends AppCompatActivity {
+public class EditCoordinatorActivity extends AppCompatActivity {
 
     private static final int REQUEST_READ_PERMISSION = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
 
-    private Professor professor;
-
+    private Student coordinatorEdit;
     private Coordinator coordinator;
+
     private TextView textId;
     private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText, passwordEditText;
     private ImageView profileImageView;
     private Button deleteButton, saveButton;
     private CheckBox activeCheckBox;
-    private Spinner genderSpinner, courseSpinner;
+    private Spinner courseSpinner, genderSpinner;
+    private List<Course> courseList;
+    private Course selectedCourse;
     private Gender selectedGender;
     private Bitmap selectedPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_professor);
+        setContentView(R.layout.activity_edit_coordinator);
 
         Intent intent = getIntent();
         if (intent != null) {
-            professor = (Professor) intent.getSerializableExtra("professor");
+            coordinatorEdit = (Student) intent.getSerializableExtra("coordinatorEdit");
             coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
         }
 
@@ -72,68 +79,41 @@ public class EditProfessorActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         phoneEditText = findViewById(R.id.phoneEditText);
         birthDateEditText = findViewById(R.id.birthDateEditText);
-        passwordEditText = findViewById(R.id.passwordEditText);
         profileImageView = findViewById(R.id.profileImageView);
         deleteButton = findViewById(R.id.deleteButton);
         saveButton = findViewById(R.id.saveButton);
-        activeCheckBox = findViewById(R.id.activeCheckBox);
-        genderSpinner = findViewById(R.id.genderSpinner);
         courseSpinner = findViewById(R.id.courseSpinner);
+        genderSpinner = findViewById(R.id.genderSpinner);
+        activeCheckBox = findViewById(R.id.activeCheckBox);
+        passwordEditText = findViewById(R.id.passwordEditText);
 
-        List<String> genderOptions = new ArrayList<>();
-        genderOptions.add("Feminino");
-        genderOptions.add("Masculino");
-        genderOptions.add("Outro");
+        loadCourses();
+        setupGenderSpinner();
+        requestStoragePermission();
 
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCourseList());
-        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(courseAdapter);
+        if (coordinatorEdit != null) {
+            textId.setText("Matrícula: " + coordinatorEdit.getId());
+            nameEditText.setText(coordinatorEdit.getName());
+            cpfEditText.setText(EGradeUtil.formatCpf(coordinatorEdit.getCpf()));
+            emailEditText.setText(coordinatorEdit.getEmail());
+            phoneEditText.setText(EGradeUtil.formatNumber(coordinatorEdit.getPhoneNumber()));
+            birthDateEditText.setText(EGradeUtil.dateToString(coordinatorEdit.getBirthDate()));
+            activeCheckBox.setChecked(coordinatorEdit.isActive());
+            genderSpinner.setSelection(coordinatorEdit.getGender().equals(Gender.M) ? 0 : coordinatorEdit.getGender().equals(Gender.F) ? 1 : 2);
 
-        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genderOptions);
-        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        genderSpinner.setAdapter(genderAdapter);
+            if (coordinatorEdit.getProfilePicture() != null) {
+                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(coordinatorEdit.getProfilePicture().getBytes()));
+            }
 
-        if (professor != null) {
-            textId.setText("Matrícula: " + professor.getId());
-            nameEditText.setText(professor.getName());
-            cpfEditText.setText(professor.getCpf());
-            emailEditText.setText(professor.getEmail());
-            phoneEditText.setText(professor.getPhoneNumber());
-            birthDateEditText.setText(EGradeUtil.dateToString(professor.getBirthDate()));
-            passwordEditText.setText(professor.getPassword());
-            activeCheckBox.setChecked(professor.isActive());
-            selectedGender = professor.getGender();
-
-            genderSpinner.setSelection(genderAdapter.getPosition(professor.getGender().toString()));
-
-            genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    String gender = (String) parent.getItemAtPosition(position);
-                    if (gender.equals("Feminino")) {
-                        selectedGender = Gender.F;
-                    } else if (gender.equals("Masculino")) {
-                        selectedGender = Gender.M;
-                    } else {
-                        selectedGender = Gender.O;
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {}
-            });
-
-            deleteButton.setVisibility(View.VISIBLE);
-            deleteButton.setOnClickListener(v -> deleteProfessor());
-
-            saveButton.setOnClickListener(v -> saveProfessor());
         } else {
             textId.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
             deleteButton.setVisibility(View.INVISIBLE);
         }
 
-        profileImageView.setOnClickListener(v -> requestStoragePermission());
+        deleteButton.setOnClickListener(v -> deleteStudent());
+
+        saveButton.setOnClickListener(v -> saveStudent());
 
         cpfEditText.addTextChangedListener(new TextWatcher() {
 
@@ -254,63 +234,23 @@ public class EditProfessorActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
-    }
 
-    private List<String> getCourseList() {
-        List<String> courses = new ArrayList<>();
-        courses.add("Matemática");
-        courses.add("Física");
-        courses.add("Química");
-        return courses;
-    }
-
-    private void requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_READ_PERMISSION);
-        } else {
-            openImageChooser();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_READ_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 openImageChooser();
-            } else {
-                Toast.makeText(this, "Permissão de leitura negada", Toast.LENGTH_SHORT).show();
             }
-        }
+        });
     }
 
     private void openImageChooser() {
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Selecione uma imagem"), PICK_IMAGE_REQUEST);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
-            try {
-                selectedPhoto = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                profileImageView.setImageBitmap(selectedPhoto);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void deleteProfessor() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/delete/" + professor.getId();
+    private void deleteStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinatorEdit/delete/" + coordinatorEdit.getId();
 
         HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
             @Override
@@ -319,7 +259,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Professor deletado com sucesso!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
@@ -327,44 +267,22 @@ public class EditProfessorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao deletar professor! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao deletar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
     }
 
-    private void saveProfessor() {
-        if (validateInputs()) {
-            if (professor == null) {
-                registerProfessor();
-            } else {
-                updateProfessor();
-            }
+    private void saveStudent() {
+        if (coordinatorEdit == null) {
+            registerStudent();
+        } else {
+            updateStudent();
         }
     }
 
-    private boolean validateInputs() {
-        if (nameEditText.getText().toString().isEmpty()) {
-            nameEditText.setError("Nome é obrigatório");
-            return false;
-        }
-        if (cpfEditText.getText().toString().length() != 11) {
-            cpfEditText.setError("CPF inválido");
-            return false;
-        }
-        if (emailEditText.getText().toString().isEmpty()) {
-            emailEditText.setError("Email é obrigatório");
-            return false;
-        }
-        if (passwordEditText.getText().toString().isEmpty()) {
-            passwordEditText.setError("Senha é obrigatória");
-            return false;
-        }
-        return true;
-    }
-
-    private void registerProfessor() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/save";
+    private void registerStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinator/save";
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
                 "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
@@ -374,7 +292,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "subjects",
+                "course", String.valueOf(selectedCourse.getId()),
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
         );
 
@@ -399,9 +317,10 @@ public class EditProfessorActivity extends AppCompatActivity {
         });
     }
 
-    private void updateProfessor() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/save";
+    private void updateStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinator/update";
         final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(coordinatorEdit.getId()),
                 "name", nameEditText.getText().toString(),
                 "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
                 "gender", selectedGender.toString(),
@@ -410,8 +329,8 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "subjects",
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
+                "course", String.valueOf(selectedCourse.getId()),
+                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
         );
 
         HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
@@ -421,7 +340,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Professor atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
@@ -429,10 +348,117 @@ public class EditProfessorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao atualizar professor! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao atualizar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
     }
-}
 
+    private void loadCourses() {
+        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                final Gson gson = new Gson();
+                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>() {
+                }.getType();
+                courseList = gson.fromJson(response, courseListType);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupCourseSpinner();
+                        if (coordinatorEdit != null) {
+                            courseSpinner.setSelection(courseList.indexOf(coordinatorEdit.getCourse()));
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void setupCourseSpinner() {
+        if (courseList == null) {
+            return;
+        }
+
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courseList) {
+            courseNames.add(course.getName());
+        }
+
+        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, courseNames);
+        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        courseSpinner.setAdapter(courseAdapter);
+
+        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCourse = courseList.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void setupGenderSpinner() {
+        final Map<Gender, String> genderMap = new HashMap<>();
+        genderMap.put(Gender.M, "Masculino");
+        genderMap.put(Gender.F, "Feminino");
+        genderMap.put(Gender.O, "Outro");
+
+        List<String> genderDescriptions = new ArrayList<>();
+        for (Gender gender : Gender.values()) {
+            genderDescriptions.add(genderMap.get(gender));
+        }
+
+        ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, genderDescriptions);
+        genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
+
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGender = Gender.values()[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_PERMISSION);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                selectedPhoto = bitmap;
+                profileImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}

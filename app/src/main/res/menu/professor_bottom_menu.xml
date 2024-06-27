@@ -12,11 +12,6 @@
         android:icon="@drawable/people_24"/>
 
     <item
-        android:id="@+id/fab"
-        android:title=""
-        android:enabled="false"/>
-
-    <item
         android:id="@+id/professor_solicitations"
         android:title="Solicitações"
         android:icon="@drawable/book_24"/>
