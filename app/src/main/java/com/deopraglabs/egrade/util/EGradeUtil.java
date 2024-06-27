@@ -12,8 +12,8 @@ import java.util.Date;
 public class EGradeUtil {
 
 //    public static final String URL = "http://10.30.9.230:8080";
-    public static final String URL = "http://192.168.1.41:8080";
-//    public static final String URL = "http://192.168.1.10:8080";
+//    public static final String URL = "http://192.168.1.41:8080";
+    public static final String URL = "http://192.168.1.10:8080";
 
     public static String formatCpf(String oldCpf) {
         return oldCpf.substring(0, 3) + '.' + oldCpf.substring(3, 6) + '.' + oldCpf.substring(6, 9) + '-' + oldCpf.substring(9);

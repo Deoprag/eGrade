@@ -7,19 +7,14 @@
         android:icon="@drawable/home_24"/>
 
     <item
-        android:id="@+id/coordinator_classes"
-        android:title="Alunos"
+        android:id="@+id/coordinator_register_people"
+        android:title="Pessoas"
         android:icon="@drawable/people_24"/>
 
     <item
-        android:id="@+id/coordinator_register"
-        android:title="Cadastro"
+        android:id="@+id/coordinator_register_other"
+        android:title="Outros"
         android:icon="@drawable/sharp_calendar_24"/>
-
-    <item
-        android:id="@+id/coordinator_courses"
-        android:title="Cursos"
-        android:icon="@drawable/book_24"/>
 
     <item
         android:id="@+id/coordinator_profile"

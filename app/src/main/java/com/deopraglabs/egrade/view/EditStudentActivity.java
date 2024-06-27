@@ -104,6 +104,7 @@ public class EditStudentActivity extends AppCompatActivity {
             if (student.getProfilePicture() != null) {
                 profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
             }
+
         } else {
             textId.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
@@ -326,6 +327,7 @@ public class EditStudentActivity extends AppCompatActivity {
                 "email", emailEditText.getText().toString(),
                 "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
                 "birthDate", birthDateEditText.getText().toString(),
+                "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "course", String.valueOf(selectedCourse.getId()),
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""

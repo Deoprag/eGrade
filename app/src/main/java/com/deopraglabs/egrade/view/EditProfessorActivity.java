@@ -27,6 +27,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
+import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
@@ -43,6 +44,8 @@ public class EditProfessorActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 2;
 
     private Professor professor;
+
+    private Coordinator coordinator;
     private TextView textId;
     private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText, passwordEditText;
     private ImageView profileImageView;
@@ -60,6 +63,7 @@ public class EditProfessorActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             professor = (Professor) intent.getSerializableExtra("professor");
+            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
         }
 
         nameEditText = findViewById(R.id.nameEditText);

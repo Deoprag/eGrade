@@ -29,19 +29,16 @@ public class CoordinatorActivity extends AppCompatActivity {
         coordinator = (Coordinator) intent.getSerializableExtra("user");
 
         replaceFragment(new CoordinatorHomeFragment());
-        binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
-            if (item.getItemId() == R.id.coordinator_classes) {
-                selectedFragment = CoordinatorStudentsFragment.newInstance(coordinator);
-            } else if (item.getItemId() == R.id.coordinator_courses) {
-                selectedFragment = CoordinatorCourseFragment.newInstance(coordinator);
+            if (item.getItemId() == R.id.coordinator_register_people) {
+                selectedFragment = CoordinatorRegisterPeopleFragment.newInstance(coordinator);
             } else if (item.getItemId() == R.id.coordinator_profile) {
                 selectedFragment = CoordinatorProfileFragment.newInstance(coordinator);
-            } else if (item.getItemId() == R.id.coordinator_register) {
-                selectedFragment = CoordinatorRegisterFragment.newInstance(coordinator);
+            } else if (item.getItemId() == R.id.coordinator_register_other) {
+                selectedFragment = CoordinatorRegisterOtherFragment.newInstance(coordinator);
             } else {
                 selectedFragment = new CoordinatorHomeFragment();
             }

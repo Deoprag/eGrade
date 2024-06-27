@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +30,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoordinatorStudentsFragment extends Fragment {
+public class CoordinatorStudentsActivity extends AppCompatActivity {
 
     private Coordinator coordinator;
 
@@ -43,29 +40,20 @@ public class CoordinatorStudentsFragment extends Fragment {
     private List<Course> courseList;
     private Spinner courseSpinner;
 
-    public static CoordinatorStudentsFragment newInstance(Coordinator coordinator) {
-        CoordinatorStudentsFragment fragment = new CoordinatorStudentsFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", coordinator);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_coordinator_students);
 
-        if (getArguments() != null) {
-            coordinator = (Coordinator) getArguments().getSerializable("user");
-        }
+        coordinator = (Coordinator) getIntent().getSerializableExtra("coordinator");
 
         studentList = new ArrayList<>();
         courseList = new ArrayList<>();
 
-        adapter = new StudentAdapter(getActivity(), studentList, new StudentAdapter.OnItemClickListener() {
+        adapter = new StudentAdapter(this, studentList, new StudentAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Student student) {
-                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
+                Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
                 intent.putExtra("student", student);
                 intent.putExtra("coordinator", coordinator);
                 startActivity(intent);
@@ -73,43 +61,24 @@ public class CoordinatorStudentsFragment extends Fragment {
         });
 
         loadCourses();
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_coordinator_students, container, false);
-
-        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_YES:
-                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
-                break;
-            case Configuration.UI_MODE_NIGHT_NO:
-            default:
-                view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
-                break;
-        }
-
-        recyclerView = view.findViewById(R.id.recyclerViewStudents);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView = findViewById(R.id.recyclerViewStudents);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        courseSpinner = view.findViewById(R.id.courseSpinner);
+        courseSpinner = findViewById(R.id.courseSpinner);
 
-        Button addStudentButton = view.findViewById(R.id.addStudentButton);
+        Button addStudentButton = findViewById(R.id.addStudentButton);
         addStudentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditStudentActivity.class);
+                Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
                 intent.putExtra("coordinator", coordinator);
                 startActivity(intent);
             }
         });
 
         setupCourseSpinner();
-
-        return view;
     }
 
     private void loadCourses() {
@@ -123,7 +92,7 @@ public class CoordinatorStudentsFragment extends Fragment {
                 Type courseListType = new TypeToken<List<Course>>() {}.getType();
                 courseList = gson.fromJson(response, courseListType);
 
-                requireActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         setupCourseSpinner();
@@ -148,7 +117,7 @@ public class CoordinatorStudentsFragment extends Fragment {
             courseNames.add(course.getName());
         }
 
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(getContext(),
+        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, courseNames);
         courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         courseSpinner.setAdapter(courseAdapter);
@@ -176,7 +145,7 @@ public class CoordinatorStudentsFragment extends Fragment {
                 Type studentListType = new TypeToken<List<Student>>() {}.getType();
                 List<Student> students = gson.fromJson(response, studentListType);
 
-                requireActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (students != null) {
