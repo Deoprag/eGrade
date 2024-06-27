@@ -85,6 +85,8 @@ public class EditProfessorActivity extends AppCompatActivity {
         genderOptions.add("Masculino");
         genderOptions.add("Outro");
 
+        requestStoragePermission();
+
         ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCourseList());
         courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         courseSpinner.setAdapter(courseAdapter);
@@ -254,6 +256,8 @@ public class EditProfessorActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+
+        profileImageView.setOnClickListener(v -> openImageChooser());
     }
 
     private List<String> getCourseList() {
@@ -264,49 +268,11 @@ public class EditProfessorActivity extends AppCompatActivity {
         return courses;
     }
 
-    private void requestStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_READ_PERMISSION);
-        } else {
-            openImageChooser();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_READ_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openImageChooser();
-            } else {
-                Toast.makeText(this, "Permissão de leitura negada", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     private void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Selecione uma imagem"), PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            Uri imageUri = data.getData();
-            try {
-                selectedPhoto = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                profileImageView.setImageBitmap(selectedPhoto);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void deleteProfessor() {
@@ -316,12 +282,9 @@ public class EditProfessorActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Professor deletado com sucesso!", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Professor deletado com sucesso!", Toast.LENGTH_LONG).show();
+                    finish();
                 });
             }
 
@@ -382,12 +345,9 @@ public class EditProfessorActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    finish();
                 });
             }
 
@@ -410,7 +370,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "subjects",
+//                "subjects",
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
         );
 
@@ -418,12 +378,9 @@ public class EditProfessorActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Professor atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Professor atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    finish();
                 });
             }
 
@@ -433,6 +390,30 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.e("Erro", error);
             }
         });
+    }
+
+
+    private void requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_PERMISSION);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                selectedPhoto = bitmap;
+                profileImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

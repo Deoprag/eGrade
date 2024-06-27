@@ -28,16 +28,13 @@ import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
-import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,8 +54,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
     private Button deleteButton, saveButton;
     private CheckBox activeCheckBox;
     private Spinner courseSpinner, genderSpinner;
-    private List<Course> courseList;
-    private Course selectedCourse;
     private Gender selectedGender;
     private Bitmap selectedPhoto;
 
@@ -87,7 +82,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         activeCheckBox = findViewById(R.id.activeCheckBox);
         passwordEditText = findViewById(R.id.passwordEditText);
 
-        loadCourses();
         setupGenderSpinner();
         requestStoragePermission();
 
@@ -292,7 +286,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "course", String.valueOf(selectedCourse.getId()),
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
         );
 
@@ -329,7 +322,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "course", String.valueOf(selectedCourse.getId()),
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
         );
 
@@ -350,63 +342,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             public void onFailure(String error) {
                 Toast.makeText(getApplicationContext(), "Erro ao atualizar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void loadCourses() {
-        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
-
-        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                final Gson gson = new Gson();
-                Type courseListType = new com.google.gson.reflect.TypeToken<List<Course>>() {
-                }.getType();
-                courseList = gson.fromJson(response, courseListType);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setupCourseSpinner();
-                        if (coordinatorEdit != null) {
-                            courseSpinner.setSelection(courseList.indexOf(coordinatorEdit.getCourse()));
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void setupCourseSpinner() {
-        if (courseList == null) {
-            return;
-        }
-
-        List<String> courseNames = new ArrayList<>();
-        for (Course course : courseList) {
-            courseNames.add(course.getName());
-        }
-
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, courseNames);
-        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(courseAdapter);
-
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCourse = courseList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }

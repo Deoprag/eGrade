@@ -5,6 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Spinner para selecionar curso -->
     <Spinner
         android:id="@+id/courseSpinner"
         android:layout_width="match_parent"
@@ -13,20 +14,20 @@
         style="@style/SpinnerStyle"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewStudents"
+        android:id="@+id/recyclerViewProfessors"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical"/>
-
+        android:scrollbars="vertical" />
 
     <Button
-        android:id="@+id/addStudentButton"
+        android:id="@+id/addProfessorButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Adicionar Aluno"
+        android:text="Adicionar Professor"
         android:drawableLeft="@drawable/add_24"
         android:padding="12dp"
         android:background="?android:attr/selectableItemBackground"
         android:textColor="?android:attr/textColorPrimary" />
+
 </LinearLayout>
