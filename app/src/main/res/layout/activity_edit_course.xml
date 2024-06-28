@@ -13,6 +13,8 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
+        <!-- Existing elements -->
+
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -76,10 +78,18 @@
         <Spinner
             android:id="@+id/subjectsSpinner"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:prompt="@string/subjects_prompt"/>
+            android:prompt="@string/subjects_prompt" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectedSubjectsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
 
         <Button
             android:id="@+id/saveButton"

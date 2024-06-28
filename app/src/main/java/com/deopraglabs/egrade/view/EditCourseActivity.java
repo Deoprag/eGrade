@@ -7,18 +7,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
+import com.deopraglabs.egrade.adapter.SelectedSubjectsAdapter;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -39,6 +42,11 @@ public class EditCourseActivity extends AppCompatActivity {
     private Spinner coordinatorSpinner;
     private List<Coordinator> coordinatorList;
     private Coordinator selectedCoordinator;
+    private Spinner subjectsSpinner;
+    private RecyclerView selectedSubjectsRecyclerView;
+    private List<Subject> subjects;
+    private List<Subject> selectedSubjects;
+    private SelectedSubjectsAdapter selectedSubjectsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +67,7 @@ public class EditCourseActivity extends AppCompatActivity {
         coordinatorSpinner = findViewById(R.id.coordinatorSpinner);
 
         loadCoordinators();
+        loadSubjects();
 
         if (course != null) {
             textId.setText("ID: " + course.getId());
@@ -73,8 +82,67 @@ public class EditCourseActivity extends AppCompatActivity {
         }
 
         deleteButton.setOnClickListener(v -> deleteCourse());
-
         saveButton.setOnClickListener(v -> saveCourse());
+
+        subjectsSpinner = findViewById(R.id.subjectsSpinner);
+        selectedSubjectsRecyclerView = findViewById(R.id.selectedSubjectsRecyclerView);
+
+        selectedSubjects = new ArrayList<>();
+        selectedSubjectsAdapter = new SelectedSubjectsAdapter(selectedSubjects, subject -> {
+            selectedSubjects.remove(subject);
+            subjects.add(subject);
+            updateSpinners();
+        });
+
+        selectedSubjectsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        selectedSubjectsRecyclerView.setAdapter(selectedSubjectsAdapter);
+    }
+
+    private void updateSpinners() {
+        ArrayAdapter<Subject> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(adapter);
+
+        subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Subject selectedSubject = (Subject) parent.getItemAtPosition(position);
+                if (!selectedSubjects.contains(selectedSubject)) {
+                    selectedSubjects.add(selectedSubject);
+                    subjects.remove(selectedSubject);
+                    selectedSubjectsAdapter.notifyDataSetChanged();
+                    updateSpinners();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    private void loadSubjects() {
+        final String url = EGradeUtil.URL + "/api/v1/subject/findAll/";
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Response", response);
+                final Gson gson = new Gson();
+                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
+                subjects = gson.fromJson(response, subjectListType);
+
+                runOnUiThread(() -> {
+                    subjects.removeAll(selectedSubjects);
+                    updateSpinners();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Error", error);
+            }
+        });
     }
 
     private int getCoordinatorIndex(Coordinator coordinator) {
@@ -196,7 +264,9 @@ public class EditCourseActivity extends AppCompatActivity {
                 coordinatorList = gson.fromJson(response, coordinatorListType);
 
                 runOnUiThread(() -> {
-                    setupCoordinatorSpinner();
+                    ArrayAdapter<Coordinator> adapter = new ArrayAdapter<>(EditCourseActivity.this, android.R.layout.simple_spinner_item, coordinatorList);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    coordinatorSpinner.setAdapter(adapter);
                     if (course != null) {
                         coordinatorSpinner.setSelection(getCoordinatorIndex(course.getCoordinator()));
                     }
@@ -206,33 +276,6 @@ public class EditCourseActivity extends AppCompatActivity {
             @Override
             public void onFailure(String error) {
                 Log.e("Error", error);
-            }
-        });
-    }
-
-    private void setupCoordinatorSpinner() {
-        if (coordinatorList == null) {
-            return;
-        }
-
-        List<String> coordinatorNames = new ArrayList<>();
-        for (Coordinator coordinator : coordinatorList) {
-            coordinatorNames.add(coordinator.getName());
-        }
-
-        ArrayAdapter<String> coordinatorAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, coordinatorNames);
-        coordinatorAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        coordinatorSpinner.setAdapter(coordinatorAdapter);
-
-        coordinatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedCoordinator = coordinatorList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
     }
