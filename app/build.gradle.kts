@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.gridlayout:gridlayout:1.0.0")
     implementation("com.google.firebase:firebase-crashlytics-buildtools:3.0.0")
     implementation("androidx.preference:preference:1.2.0")
+    implementation("com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("androidx.activity:activity:1.8.2")
     implementation("org.projectlombok:lombok:1.18.32")

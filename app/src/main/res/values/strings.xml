@@ -18,4 +18,5 @@
     <string name="previous">Previous</string>
     <string name="gender_prompt">Gênero</string>
     <string name="course_prompt">Curso</string>
+    <string name="professor_prompt">Professores\n</string>
 </resources>

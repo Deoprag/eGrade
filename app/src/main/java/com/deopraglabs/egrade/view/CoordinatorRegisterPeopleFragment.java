@@ -52,7 +52,7 @@ public class CoordinatorRegisterPeopleFragment extends Fragment {
         cardViewCoordenador.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), EditCoordinatorActivity.class);
+                Intent intent = new Intent(getActivity(), CoordinatorCoordinatorsActivity.class);
                 intent.putExtra("coordinator", coordinator);
                 startActivity(intent);
             }

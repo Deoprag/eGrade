@@ -17,13 +17,22 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".view.CoordinatorSubjectsActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.CoordinatorProfessorsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.CoordinatorCoordinatorsActivity"
             android:exported="false" />
         <activity
             android:name=".view.CoordinatorStudentsActivity"
             android:exported="false" />
         <activity
             android:name=".view.EditProfessorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.EditSubjectActivity"
             android:exported="false" />
         <activity
             android:name=".view.EditCoordinatorActivity"

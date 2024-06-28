@@ -79,7 +79,7 @@
         android:text="Editar"
         android:background="?attr/selectableItemBackground"
         android:textColor="#E00051"
-        android:drawableLeft="@drawable/ic_edit"
+        android:drawableLeft="@drawable/edit_24"
         android:drawableTint="@color/pink"
         android:padding="8dp" />
 

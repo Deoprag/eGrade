@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,7 +7,7 @@
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical">
 
-<ImageView
+    <ImageView
         android:id="@+id/profileImageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -25,10 +26,10 @@
             android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nome"
+            android:text="Nome do Coordenador"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#E00051"
-            android:textSize="16sp" />
+            android:textColor="#E00051" />
 
         <TextView
             android:id="@+id/cpfTextView"
@@ -42,7 +43,7 @@
             android:id="@+id/emailTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email"
+            android:text="E-mail"
             android:textColor="#757575"
             android:textSize="14sp" />
 
@@ -63,18 +64,10 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/courseTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Curso"
-            android:textColor="#757575"
-            android:textSize="14sp" />
-
-        <TextView
             android:id="@+id/activeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ativo"
+            android:text="Status"
             android:textColor="#757575"
             android:textSize="14sp" />
     </LinearLayout>
@@ -85,8 +78,9 @@
         android:layout_height="wrap_content"
         android:text="Editar"
         android:background="?attr/selectableItemBackground"
+        android:textColor="#E00051"
         android:drawableLeft="@drawable/edit_24"
         android:drawableTint="@color/pink"
-        android:textColor="#E00051"
-        />
+        android:padding="8dp" />
+
 </LinearLayout>

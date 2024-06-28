@@ -30,7 +30,6 @@ import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
-import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 
@@ -45,8 +44,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
     private static final int REQUEST_READ_PERMISSION = 1;
     private static final int PICK_IMAGE_REQUEST = 2;
 
-    private Student coordinatorEdit;
-    private Coordinator coordinator;
+    private Coordinator coordinator, coordinatorEdit;
 
     private TextView textId;
     private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText, passwordEditText;
@@ -64,7 +62,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            coordinatorEdit = (Student) intent.getSerializableExtra("coordinatorEdit");
+            coordinatorEdit = (Coordinator) intent.getSerializableExtra("coordinatorEdit");
             coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
         }
 
