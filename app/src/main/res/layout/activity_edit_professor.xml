@@ -132,7 +132,7 @@
             android:prompt="@string/gender_prompt"/>
 
         <Spinner
-            android:id="@+id/courseSpinner"
+            android:id="@+id/subjectSpinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingTop="8dp"

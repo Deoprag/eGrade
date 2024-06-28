@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -58,7 +56,7 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
             }
         });
 
-        loadCourses();
+        loadProfessors();
 
         recyclerView = findViewById(R.id.recyclerViewProfessors);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -76,64 +74,10 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
             }
         });
 
-        setupCourseSpinner();
     }
 
-    private void loadCourses() {
-        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
-
-        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                Gson gson = new Gson();
-                Type courseListType = new TypeToken<List<Course>>() {}.getType();
-                courseList = gson.fromJson(response, courseListType);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setupCourseSpinner();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void setupCourseSpinner() {
-        if (courseList == null) {
-            return;
-        }
-
-        List<String> courseNames = new ArrayList<>();
-        for (Course course : courseList) {
-            courseNames.add(course.getName());
-        }
-
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, courseNames);
-        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(courseAdapter);
-
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Course selectedCourse = courseList.get(position);
-                loadProfessorsByCourse(selectedCourse);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-    }
-
-    private void loadProfessorsByCourse(Course course) {
-        final String url = EGradeUtil.URL + "/api/v1/professor/findAllByCourse/" + course.getId();
+    private void loadProfessors() {
+        final String url = EGradeUtil.URL + "/api/v1/professor/findAllByCoordinator/" + coordinator.getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
@@ -143,16 +87,13 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
                 Type professorListType = new TypeToken<List<Professor>>() {}.getType();
                 List<Professor> professors = gson.fromJson(response, professorListType);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (professors != null) {
-                            professorList.clear();
-                            professorList.addAll(professors);
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.e("Erro", "Lista de professores retornada é nula");
-                        }
+                runOnUiThread(() -> {
+                    if (professors != null) {
+                        professorList.clear();
+                        professorList.addAll(professors);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Erro", "Lista de professores retornada é nula");
                     }
                 });
             }

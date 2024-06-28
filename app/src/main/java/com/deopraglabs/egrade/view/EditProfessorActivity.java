@@ -28,13 +28,17 @@ import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +55,11 @@ public class EditProfessorActivity extends AppCompatActivity {
     private ImageView profileImageView;
     private Button deleteButton, saveButton;
     private CheckBox activeCheckBox;
-    private Spinner genderSpinner, courseSpinner;
+    private Spinner genderSpinner, subjectSpinner;
     private Gender selectedGender;
     private Bitmap selectedPhoto;
+    private List<Subject> subjectList;
+    private Subject selectedSubject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +84,7 @@ public class EditProfessorActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         activeCheckBox = findViewById(R.id.activeCheckBox);
         genderSpinner = findViewById(R.id.genderSpinner);
-        courseSpinner = findViewById(R.id.courseSpinner);
+        subjectSpinner = findViewById(R.id.subjectSpinner);
 
         List<String> genderOptions = new ArrayList<>();
         genderOptions.add("Feminino");
@@ -86,10 +92,7 @@ public class EditProfessorActivity extends AppCompatActivity {
         genderOptions.add("Outro");
 
         requestStoragePermission();
-
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCourseList());
-        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        courseSpinner.setAdapter(courseAdapter);
+        loadSubjects();
 
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genderOptions);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -260,14 +263,58 @@ public class EditProfessorActivity extends AppCompatActivity {
         profileImageView.setOnClickListener(v -> openImageChooser());
     }
 
-    private List<String> getCourseList() {
-        List<String> courses = new ArrayList<>();
-        courses.add("Matemática");
-        courses.add("Física");
-        courses.add("Química");
-        return courses;
+    private void loadSubjects() {
+        final String url = EGradeUtil.URL + "/api/v1/subject/findByCoordinatorId/" + coordinator.getId();
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                Gson gson = new Gson();
+                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
+                subjectList = gson.fromJson(response, subjectListType);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setupSubjectSpinner();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
     }
 
+    private void setupSubjectSpinner() {
+        if (subjectList == null) {
+            return;
+        }
+
+        List<String> subjectNames = new ArrayList<>();
+        for (Subject subject : subjectList) {
+            subjectNames.add(subject.getName());
+        }
+
+        ArrayAdapter<String> subjectAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, subjectNames);
+        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectSpinner.setAdapter(subjectAdapter);
+
+        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedSubject = subjectList.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+    
     private void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -319,8 +366,12 @@ public class EditProfessorActivity extends AppCompatActivity {
             emailEditText.setError("Email é obrigatório");
             return false;
         }
-        if (passwordEditText.getText().toString().isEmpty()) {
-            passwordEditText.setError("Senha é obrigatória");
+        if (phoneEditText.getText().toString().isEmpty()) {
+            phoneEditText.setError("Telefone é obrigatório");
+            return false;
+        }
+        if (birthDateEditText.getText().toString().isEmpty()) {
+            birthDateEditText.setError("Data de Nascimento é obrigatória");
             return false;
         }
         return true;
@@ -346,22 +397,23 @@ public class EditProfessorActivity extends AppCompatActivity {
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Professor cadastrado com sucesso!", Toast.LENGTH_LONG).show();
                     finish();
                 });
             }
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar professor! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
     }
 
     private void updateProfessor() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/save";
+        final String url = EGradeUtil.URL + "/api/v1/professor/update";
         final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(professor.getId()),
                 "name", nameEditText.getText().toString(),
                 "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
                 "gender", selectedGender.toString(),
@@ -370,7 +422,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-//                "subjects",
+                "subjects", String.valueOf(selectedSubject.getId()),
                 "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
         );
 
@@ -386,8 +438,10 @@ public class EditProfessorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao atualizar professor! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Erro ao atualizar professor! Erro:" + error, Toast.LENGTH_LONG).show();
+                    Log.e("Erro", error);
+                });
             }
         });
     }

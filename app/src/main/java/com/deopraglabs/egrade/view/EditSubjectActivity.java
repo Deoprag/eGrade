@@ -58,18 +58,6 @@ public class EditSubjectActivity extends AppCompatActivity {
 
         loadProfessors();
 
-        if (subject != null) {
-            textId.setText("ID: " + subject.getId());
-            nameEditText.setText(subject.getName());
-            if (subject.getProfessor() != null) {
-                professorSpinner.setSelection(professorList.indexOf(subject.getProfessor()));
-            }
-        } else {
-            textId.setVisibility(View.INVISIBLE);
-            deleteButton.setEnabled(false);
-            deleteButton.setVisibility(View.INVISIBLE);
-        }
-
         deleteButton.setOnClickListener(v -> deleteSubject());
 
         saveButton.setOnClickListener(v -> saveSubject());
@@ -87,7 +75,20 @@ public class EditSubjectActivity extends AppCompatActivity {
                 }.getType();
                 professorList = gson.fromJson(response, professorListType);
 
-                runOnUiThread(() -> setupProfessorSpinner());
+                runOnUiThread(() -> {
+                    setupProfessorSpinner();
+                    if (subject != null) {
+                        textId.setText("ID: " + subject.getId());
+                        nameEditText.setText(subject.getName());
+                        if (subject.getProfessor() != null) {
+                            professorSpinner.setSelection(professorList.indexOf(subject.getProfessor()));
+                        }
+                    } else {
+                        textId.setVisibility(View.INVISIBLE);
+                        deleteButton.setEnabled(false);
+                        deleteButton.setVisibility(View.INVISIBLE);
+                    }
+                });
             }
 
             @Override

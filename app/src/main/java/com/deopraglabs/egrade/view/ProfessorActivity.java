@@ -42,7 +42,6 @@ public class ProfessorActivity extends AppCompatActivity {
                 selectedFragment = ProfessorProfileFragment.newInstance(professor);
             } else {
                 selectedFragment = new ProfessorHomeFragment();
-                binding.bottomNavigationView.setSelectedItemId(R.id.coordinator_home);
             }
 
             replaceFragment(selectedFragment);

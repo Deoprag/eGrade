@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,16 +16,32 @@
             android:id="@+id/nameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Matéria"
-            android:textSize="16sp"
+            android:text="Nome do Curso"
             android:textStyle="bold"
-            android:textColor="#E00051" />
+            android:textColor="#E00051"
+            android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/professorTextView"
+            android:id="@+id/descriptionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nome do Professor"
+            android:text="Descrição do Curso"
+            android:textColor="#757575"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/coordinatorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Coordenador: Nome do Coordenador"
+            android:textColor="#757575"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/subjectsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Matérias: Matéria 1, Matéria 2, Matéria 3"
             android:textColor="#757575"
             android:textSize="14sp" />
     </LinearLayout>
@@ -36,9 +51,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Editar"
+        android:background="?attr/selectableItemBackground"
         android:drawableLeft="@drawable/edit_24"
-        android:padding="12dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="@color/pink"
-        android:drawableTint="@color/pink"/>
+        android:drawableTint="@color/pink"
+        android:textColor="#E00051"
+        />
 </LinearLayout>

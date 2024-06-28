@@ -41,7 +41,6 @@ public class StudentActivity extends AppCompatActivity {
                 selectedFragment = new StudentProfileFragment();
             } else {
                 selectedFragment = new StudentHomeFragment();
-                binding.bottomNavigationView.setSelectedItemId(R.id.student_home);
             }
 
             replaceFragment(selectedFragment);

@@ -20,6 +20,9 @@
             android:name=".view.CoordinatorSubjectsActivity"
             android:exported="false" />
         <activity
+            android:name=".view.CoordinatorCourseActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.CoordinatorProfessorsActivity"
             android:exported="false" />
         <activity
@@ -36,6 +39,9 @@
             android:exported="false" />
         <activity
             android:name=".view.EditCoordinatorActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.EditCourseActivity"
             android:exported="false" />
         <activity
             android:name=".view.StudentActivity"

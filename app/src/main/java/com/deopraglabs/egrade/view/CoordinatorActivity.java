@@ -41,7 +41,6 @@ public class CoordinatorActivity extends AppCompatActivity {
                 selectedFragment = CoordinatorRegisterOtherFragment.newInstance(coordinator);
             } else {
                 selectedFragment = new CoordinatorHomeFragment();
-                binding.bottomNavigationView.setSelectedItemId(R.id.coordinator_home);
             }
 
             replaceFragment(selectedFragment);

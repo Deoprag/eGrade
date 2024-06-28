@@ -103,9 +103,9 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             deleteButton.setVisibility(View.INVISIBLE);
         }
 
-        deleteButton.setOnClickListener(v -> deleteStudent());
+        deleteButton.setOnClickListener(v -> deleteCoordinator());
 
-        saveButton.setOnClickListener(v -> saveStudent());
+        saveButton.setOnClickListener(v -> saveCoordinator());
 
         cpfEditText.addTextChangedListener(new TextWatcher() {
 
@@ -241,7 +241,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    private void deleteStudent() {
+    private void deleteCoordinator() {
         final String url = EGradeUtil.URL + "/api/v1/coordinatorEdit/delete/" + coordinatorEdit.getId();
 
         HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
@@ -265,15 +265,41 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         });
     }
 
-    private void saveStudent() {
-        if (coordinatorEdit == null) {
-            registerStudent();
-        } else {
-            updateStudent();
+    private void saveCoordinator() {
+        if (validateInputs()) {
+            if (coordinatorEdit == null) {
+                registerCoordinator();
+            } else {
+                updateCoordinator();
+            }
         }
     }
 
-    private void registerStudent() {
+    private boolean validateInputs() {
+        if (nameEditText.getText().toString().isEmpty()) {
+            nameEditText.setError("Nome é obrigatório");
+            return false;
+        }
+        if (cpfEditText.getText().toString().length() != 11) {
+            cpfEditText.setError("CPF inválido");
+            return false;
+        }
+        if (emailEditText.getText().toString().isEmpty()) {
+            emailEditText.setError("Email é obrigatório");
+            return false;
+        }
+        if (phoneEditText.getText().toString().isEmpty()) {
+            phoneEditText.setError("Telefone é obrigatório");
+            return false;
+        }
+        if (birthDateEditText.getText().toString().isEmpty()) {
+            birthDateEditText.setError("Data de Nascimento é obrigatória");
+            return false;
+        }
+        return true;
+    }
+
+    private void registerCoordinator() {
         final String url = EGradeUtil.URL + "/api/v1/coordinator/save";
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
@@ -294,7 +320,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Coordenador cadastrado com sucesso!", Toast.LENGTH_LONG).show();
                         finish();
                     }
                 });
@@ -302,13 +328,13 @@ public class EditCoordinatorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
     }
 
-    private void updateStudent() {
+    private void updateCoordinator() {
         final String url = EGradeUtil.URL + "/api/v1/coordinator/update";
         final String body = HttpUtil.generateRequestBody(
                 "id", String.valueOf(coordinatorEdit.getId()),
@@ -327,19 +353,18 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Coordenador atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    finish();
                 });
             }
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao atualizar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Erro ao atualizar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
+                    Log.e("Erro", error);
+                });
             }
         });
     }

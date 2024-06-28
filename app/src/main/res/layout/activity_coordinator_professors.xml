@@ -5,13 +5,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Spinner para selecionar curso -->
-    <Spinner
-        android:id="@+id/courseSpinner"
+    <TextView
+        android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        style="@style/SpinnerStyle"/>
+        android:text="Professores"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@color/pink" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProfessors"

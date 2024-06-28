@@ -9,7 +9,7 @@
         android:id="@+id/titleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Coordenadores"
+        android:text="Cursos"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -17,20 +17,19 @@
         android:textColor="@color/pink" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCoordinators"
+        android:id="@+id/recyclerViewCourses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"/>
 
     <Button
-        android:id="@+id/addCoordinatorButton"
+        android:id="@+id/addCourseButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Adicionar Coordenador"
+        android:text="Adicionar Curso"
         android:drawableLeft="@drawable/add_24"
         android:padding="12dp"
         android:background="?android:attr/selectableItemBackground"
         android:textColor="?android:attr/textColorPrimary" />
-
 </LinearLayout>

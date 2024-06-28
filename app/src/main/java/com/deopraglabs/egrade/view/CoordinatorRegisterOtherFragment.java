@@ -49,23 +49,17 @@ public class CoordinatorRegisterOtherFragment extends Fragment {
         }
 
         CardView cardViewMateria = view.findViewById(R.id.cardViewMateria);
-        cardViewMateria.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CoordinatorSubjectsActivity.class);
-                intent.putExtra("user", coordinator);
-                startActivity(intent);
-            }
+        cardViewMateria.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CoordinatorSubjectsActivity.class);
+            intent.putExtra("user", coordinator);
+            startActivity(intent);
         });
 
         CardView cardViewCurso = view.findViewById(R.id.cardViewCurso);
-        cardViewCurso.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), activity_edit_curso.class);
-//                intent.putExtra("user", coordinator);
-//                startActivity(intent);
-            }
+        cardViewCurso.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), CoordinatorCourseActivity.class);
+                intent.putExtra("user", coordinator);
+                startActivity(intent);
         });
 
         return view;

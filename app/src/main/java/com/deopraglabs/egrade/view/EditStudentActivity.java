@@ -274,11 +274,37 @@ public class EditStudentActivity extends AppCompatActivity {
     }
 
     private void saveStudent() {
-        if (student == null) {
-            registerStudent();
-        } else {
-            updateStudent();
+        if (validateInputs()) {
+            if (student == null) {
+                registerStudent();
+            } else {
+                registerStudent();
+            }
         }
+    }
+
+    private boolean validateInputs() {
+        if (nameEditText.getText().toString().isEmpty()) {
+            nameEditText.setError("Nome é obrigatório");
+            return false;
+        }
+        if (cpfEditText.getText().toString().length() != 11) {
+            cpfEditText.setError("CPF inválido");
+            return false;
+        }
+        if (emailEditText.getText().toString().isEmpty()) {
+            emailEditText.setError("Email é obrigatório");
+            return false;
+        }
+        if (phoneEditText.getText().toString().isEmpty()) {
+            phoneEditText.setError("Telefone é obrigatório");
+            return false;
+        }
+        if (birthDateEditText.getText().toString().isEmpty()) {
+            birthDateEditText.setError("Data de Nascimento é obrigatória");
+            return false;
+        }
+        return true;
     }
 
     private void registerStudent() {

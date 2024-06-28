@@ -19,4 +19,6 @@
     <string name="gender_prompt">Gênero</string>
     <string name="course_prompt">Curso</string>
     <string name="professor_prompt">Professores\n</string>
+    <string name="subjects_prompt">Matérias</string>
+    <string name="coordinator_prompt">Coordenador</string>
 </resources>

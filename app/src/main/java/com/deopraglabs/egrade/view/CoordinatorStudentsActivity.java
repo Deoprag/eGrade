@@ -1,7 +1,6 @@
 package com.deopraglabs.egrade.view;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -66,16 +65,11 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
         courseSpinner = findViewById(R.id.courseSpinner);
 
         Button addStudentButton = findViewById(R.id.addStudentButton);
-        addStudentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
-                intent.putExtra("coordinator", coordinator);
-                startActivity(intent);
-            }
+        addStudentButton.setOnClickListener(v -> {
+            Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
+            intent.putExtra("coordinator", coordinator);
+            startActivity(intent);
         });
-
-        setupCourseSpinner();
     }
 
     private void loadCourses() {
@@ -142,16 +136,13 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
                 Type studentListType = new TypeToken<List<Student>>() {}.getType();
                 List<Student> students = gson.fromJson(response, studentListType);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (students != null) {
-                            studentList.clear();
-                            studentList.addAll(students);
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            Log.e("Erro", "Lista de estudantes retornada é nula");
-                        }
+                runOnUiThread(() -> {
+                    if (students != null) {
+                        studentList.clear();
+                        studentList.addAll(students);
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Log.e("Erro", "Lista de estudantes retornada é nula");
                     }
                 });
             }
