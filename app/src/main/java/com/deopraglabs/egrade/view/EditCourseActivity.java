@@ -47,6 +47,8 @@ public class EditCourseActivity extends AppCompatActivity {
     private List<Subject> subjects;
     private List<Subject> selectedSubjects;
     private SelectedSubjectsAdapter selectedSubjectsAdapter;
+    private ArrayAdapter<Subject> subjectsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,9 @@ public class EditCourseActivity extends AppCompatActivity {
         deleteButton = findViewById(R.id.deleteButton);
         saveButton = findViewById(R.id.saveButton);
         coordinatorSpinner = findViewById(R.id.coordinatorSpinner);
+        subjectsSpinner = findViewById(R.id.subjectsSpinner);
+        selectedSubjectsRecyclerView = findViewById(R.id.selectedSubjectsRecyclerView);
+        Button addSubjectButton = findViewById(R.id.addSubjectButton);
 
         loadCoordinators();
         loadSubjects();
@@ -74,7 +79,6 @@ public class EditCourseActivity extends AppCompatActivity {
             nameEditText.setText(course.getName());
             descriptionEditText.setText(course.getDescription());
             coordinatorSpinner.setSelection(getCoordinatorIndex(course.getCoordinator()));
-
         } else {
             textId.setVisibility(View.INVISIBLE);
             deleteButton.setEnabled(false);
@@ -84,41 +88,47 @@ public class EditCourseActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(v -> deleteCourse());
         saveButton.setOnClickListener(v -> saveCourse());
 
-        subjectsSpinner = findViewById(R.id.subjectsSpinner);
-        selectedSubjectsRecyclerView = findViewById(R.id.selectedSubjectsRecyclerView);
-
         selectedSubjects = new ArrayList<>();
         selectedSubjectsAdapter = new SelectedSubjectsAdapter(selectedSubjects, subject -> {
             selectedSubjects.remove(subject);
             subjects.add(subject);
+            selectedSubjectsAdapter.notifyDataSetChanged();
             updateSpinners();
         });
 
         selectedSubjectsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         selectedSubjectsRecyclerView.setAdapter(selectedSubjectsAdapter);
-    }
 
-    private void updateSpinners() {
-        ArrayAdapter<Subject> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectsSpinner.setAdapter(adapter);
+        addSubjectButton.setOnClickListener(v -> {
+            Subject selectedSubject = (Subject) subjectsSpinner.getSelectedItem();
+            if (selectedSubject != null && !selectedSubjects.contains(selectedSubject)) {
+                selectedSubjects.add(selectedSubject);
+                subjects.remove(selectedSubject);
+                updateSpinners();
+            }
+        });
 
-        subjectsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        coordinatorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Subject selectedSubject = (Subject) parent.getItemAtPosition(position);
-                if (!selectedSubjects.contains(selectedSubject)) {
-                    selectedSubjects.add(selectedSubject);
-                    subjects.remove(selectedSubject);
-                    selectedSubjectsAdapter.notifyDataSetChanged();
-                    updateSpinners();
-                }
+                selectedCoordinator = (Coordinator) parent.getItemAtPosition(position);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                selectedCoordinator = null;
             }
         });
+
+    }
+
+    private void updateSpinners() {
+        subjectsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
+        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(subjectsAdapter);
+
+        selectedSubjectsAdapter.notifyDataSetChanged();
+        subjectsAdapter.notifyDataSetChanged();
     }
 
     private void loadSubjects() {
@@ -133,8 +143,12 @@ public class EditCourseActivity extends AppCompatActivity {
                 subjects = gson.fromJson(response, subjectListType);
 
                 runOnUiThread(() -> {
-                    subjects.removeAll(selectedSubjects);
+                    if (course != null) {
+                        selectedSubjects.addAll(course.getSubjects());
+                        subjects.removeAll(selectedSubjects);
+                    }
                     updateSpinners();
+                    selectedSubjectsAdapter.notifyDataSetChanged();
                 });
             }
 
@@ -165,6 +179,7 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso deletado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }
@@ -196,15 +211,29 @@ public class EditCourseActivity extends AppCompatActivity {
             descriptionEditText.setError("Descrição é obrigatória");
             return false;
         }
+        if (selectedSubjects.isEmpty()) {
+            runOnUiThread(() -> {
+                Toast.makeText(getApplicationContext(), "Selecione pelo menos 1 matéria!", Toast.LENGTH_LONG).show();
+            });
+            return false;
+        }
         return true;
     }
 
     private void registerCourse() {
         final String url = EGradeUtil.URL + "/api/v1/course/save";
+        StringBuilder subjectsIds = new StringBuilder();
+        for (int i = 0; i < selectedSubjects.size(); i++) {
+            subjectsIds.append(selectedSubjects.get(i).getId());
+            if (i < selectedSubjects.size() - 1) {
+                subjectsIds.append(",");
+            }
+        }
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
                 "description", descriptionEditText.getText().toString(),
-                "coordinatorId", String.valueOf(selectedCoordinator.getId())
+                "coordinatorId", String.valueOf(coordinatorSpinner.getSelectedItemId()),
+                "subjects", subjectsIds.toString()
         );
 
         HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
@@ -213,6 +242,7 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }
@@ -227,11 +257,19 @@ public class EditCourseActivity extends AppCompatActivity {
 
     private void updateCourse() {
         final String url = EGradeUtil.URL + "/api/v1/course/update";
+        StringBuilder subjectsIds = new StringBuilder();
+        for (int i = 0; i < selectedSubjects.size(); i++) {
+            subjectsIds.append(selectedSubjects.get(i).getId());
+            if (i < selectedSubjects.size() - 1) {
+                subjectsIds.append(",");
+            }
+        }
         final String body = HttpUtil.generateRequestBody(
                 "id", String.valueOf(course.getId()),
                 "name", nameEditText.getText().toString(),
                 "description", descriptionEditText.getText().toString(),
-                "coordinatorId", String.valueOf(selectedCoordinator.getId())
+                "coordinatorId", String.valueOf(selectedCoordinator.getId()),
+                "subjects", subjectsIds.toString()
         );
 
         HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
@@ -240,6 +278,7 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }
@@ -268,7 +307,8 @@ public class EditCourseActivity extends AppCompatActivity {
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     coordinatorSpinner.setAdapter(adapter);
                     if (course != null) {
-                        coordinatorSpinner.setSelection(getCoordinatorIndex(course.getCoordinator()));
+                        coordinatorSpinner.setSelection(coordinatorList.indexOf(course.getCoordinator()));
+                        selectedCoordinator = course.getCoordinator();
                     }
                 });
             }

@@ -251,7 +251,8 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Coordenador deletado com sucesso!", Toast.LENGTH_LONG).show();
+                        notifyAll();
                         finish();
                     }
                 });
@@ -259,7 +260,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao deletar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Erro ao deletar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
                 Log.e("Erro", error);
             }
         });
@@ -280,7 +281,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             nameEditText.setError("Nome é obrigatório");
             return false;
         }
-        if (cpfEditText.getText().toString().length() != 11) {
+        if (cpfEditText.getText().toString().length() != 14) {
             cpfEditText.setError("CPF inválido");
             return false;
         }
@@ -321,6 +322,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Coordenador cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                        notifyAll();
                         finish();
                     }
                 });
@@ -355,6 +357,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Coordenador atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }

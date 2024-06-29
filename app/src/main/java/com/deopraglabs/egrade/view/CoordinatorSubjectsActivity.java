@@ -36,7 +36,6 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
     private SubjectAdapter adapter;
     private List<Subject> subjectList;
     private List<Course> courseList;
-    private Spinner courseSpinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,69 +54,17 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        loadCourses();
         loadSubjects();
 
         recyclerView = findViewById(R.id.recyclerViewSubjects);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        courseSpinner = findViewById(R.id.courseSpinner);
-
         Button addSubjectButton = findViewById(R.id.addSubjectButton);
         addSubjectButton.setOnClickListener(v -> {
             Intent intent = new Intent(CoordinatorSubjectsActivity.this, EditSubjectActivity.class);
             intent.putExtra("coordinator", coordinator);
             startActivity(intent);
-        });
-
-        setupCourseSpinner();
-    }
-
-    private void loadCourses() {
-        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
-
-        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                Gson gson = new Gson();
-                Type courseListType = new TypeToken<List<Course>>() {}.getType();
-                courseList = gson.fromJson(response, courseListType);
-
-                runOnUiThread(() -> setupCourseSpinner());
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void setupCourseSpinner() {
-        if (courseList == null) {
-            return;
-        }
-
-        List<String> courseNames = new ArrayList<>();
-        for (Course course : courseList) {
-            courseNames.add(course.getName());
-        }
-
-        ArrayAdapter<String> courseAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, courseNames);
-        courseAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        courseSpinner.setAdapter(courseAdapter);
-        courseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Course selectedCourse = courseList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 

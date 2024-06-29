@@ -83,11 +83,18 @@
             android:paddingBottom="8dp"
             android:prompt="@string/subjects_prompt"/>
 
+        <Button
+            android:id="@+id/addSubjectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adicionar Matéria"
+            android:layout_gravity="center"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/selectedSubjectsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@color/light_black"
+            android:background="#DDDDDD"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:scrollbars="vertical"/>

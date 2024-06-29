@@ -16,13 +16,6 @@
         android:paddingBottom="8dp"
         android:textColor="@color/pink" />
 
-    <Spinner
-        android:id="@+id/courseSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        style="@style/SpinnerStyle"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSubjects"
         android:layout_width="match_parent"

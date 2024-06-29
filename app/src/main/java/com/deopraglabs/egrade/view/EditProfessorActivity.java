@@ -331,6 +331,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor deletado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }
@@ -398,6 +399,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }
@@ -432,6 +434,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    notifyAll();
                     finish();
                 });
             }

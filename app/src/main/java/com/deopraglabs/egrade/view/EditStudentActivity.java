@@ -260,6 +260,7 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
+                        notifyAll();
                         finish();
                     }
                 });
@@ -330,6 +331,7 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                        notifyAll();
                         finish();
                     }
                 });
@@ -367,6 +369,7 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                        notifyAll();
                         finish();
                     }
                 });

@@ -12,5 +12,9 @@ public class Subject implements Serializable {
     private long id;
     private String name;
     private Professor professor;
-    
+
+    @Override
+    public String toString() {
+        return this.getName();
+    }
 }

@@ -11,13 +11,14 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Nome da Matéria"
+        android:textColor="@color/black"
         android:textSize="16sp" />
 
     <Button
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remove"
+        android:text="Remover"
         android:backgroundTint="@color/pink"
         android:textColor="@android:color/white" />
 </LinearLayout>
