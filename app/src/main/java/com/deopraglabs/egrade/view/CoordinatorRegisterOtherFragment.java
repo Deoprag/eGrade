@@ -40,7 +40,7 @@ public class CoordinatorRegisterOtherFragment extends Fragment {
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
             case Configuration.UI_MODE_NIGHT_YES:
-                view.setBackgroundColor(getResources().getColor(android.R.color.background_dark));
+                view.setBackgroundColor(getResources().getColor(R.color.background_dark));
                 break;
             case Configuration.UI_MODE_NIGHT_NO:
             default:

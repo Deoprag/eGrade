@@ -1,6 +1,8 @@
 package com.deopraglabs.egrade.view;// StudentHomeFragment.java
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.adapter.RankingAdapter;
 import com.deopraglabs.egrade.model.Grade;
+import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Subject;
+import com.deopraglabs.egrade.util.EGradeUtil;
+import com.deopraglabs.egrade.util.HttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +47,19 @@ public class StudentHomeFragment extends Fragment {
         rankingRecyclerView = view.findViewById(R.id.rankingRecyclerView);
         subjectSpinner = view.findViewById(R.id.subjectSpinner);
 
+        int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                view.setBackgroundColor(getResources().getColor(R.color.background_dark));
+                break;
+            case Configuration.UI_MODE_NIGHT_NO:
+            default:
+                view.setBackgroundColor(getResources().getColor(android.R.color.background_light));
+                break;
+        }
+
         populateSubjects();
+
         ArrayAdapter<Subject> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, subjectsList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subjectSpinner.setAdapter(adapter);
@@ -65,7 +85,31 @@ public class StudentHomeFragment extends Fragment {
     }
 
     private void populateSubjects() {
-        //adicionar no subjectList
+        final String url = EGradeUtil.URL + "/api/v1/subject/findAll/";
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta Matéria", response);
+                Gson gson = new Gson();
+                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
+                synchronized (StudentHomeFragment.this) {
+                    List<Subject> subjects = gson.fromJson(response, subjectListType);
+                    if (subjects != null) {
+                        subjectsList.clear();
+                        subjectsList.addAll(subjects);
+                    } else {
+                        Log.e("Erro", "Lista de matérias retornada é nula");
+                    }
+                    StudentHomeFragment.this.notifyAll();
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
     }
 
     private void updateRanking(@Nullable Subject subject) {
@@ -91,7 +135,25 @@ public class StudentHomeFragment extends Fragment {
     }
 
     private List<Grade> getAllGrades() {
-        // Listar grades
-        return null;
+        final String url = EGradeUtil.URL + "/api/v1/grade/findAll";
+
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                Gson gson = new Gson();
+                Type gradeListType = new TypeToken<List<Grade>>() {}.getType();
+                synchronized (StudentHomeFragment.this) {
+                    gradesList = gson.fromJson(response, gradeListType);
+                    StudentHomeFragment.this.notifyAll();
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
+        return gradesList;
     }
 }
