@@ -6,6 +6,7 @@
     <color name="pink">#E00051</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="colorButtonSave">#42f56f</color>
+    <color name="background_dark">#2e282b</color>
     <color name="colorButtonDelete">#eb3434</color>
     <color name="colorButtonEdit">#4287f5</color>
     <color name="colorButtonInfo">#a400e0</color>

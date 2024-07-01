@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityProfessorBinding;
 import com.deopraglabs.egrade.model.Professor;
-import com.deopraglabs.egrade.model.Student;
 
 public class ProfessorActivity extends AppCompatActivity {
 
@@ -36,8 +35,8 @@ public class ProfessorActivity extends AppCompatActivity {
 
             if (item.getItemId() == R.id.professor_solicitations) {
                 selectedFragment = ProfessorSolicitationFragment.newInstance(professor);
-            } else if (item.getItemId() == R.id.professor_courses) {
-                selectedFragment = ProfessorCourseFragment.newInstance(professor);
+            } else if (item.getItemId() == R.id.professor_grades) {
+                selectedFragment = ProfessorGradeFragment.newInstance(professor);
             } else if (item.getItemId() == R.id.professor_profile) {
                 selectedFragment = ProfessorProfileFragment.newInstance(professor);
             } else {
