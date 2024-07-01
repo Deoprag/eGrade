@@ -13,14 +13,28 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
-        <ImageView
-            android:id="@+id/profileImageView"
+        <FrameLayout
+            android:layout_marginTop="150dp"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginTop="150dp"
-            android:layout_gravity="center"
-            android:contentDescription="Foto de Perfil"
-            android:src="@drawable/ic_profile_placeholder" />
+            android:layout_gravity="center">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="75dp">
+
+                <ImageView
+                    android:id="@+id/profileImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:scaleType="centerCrop"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/textId"

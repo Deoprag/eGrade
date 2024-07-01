@@ -71,7 +71,7 @@ public class ProfessorProfileFragment extends Fragment {
         phoneNumber.setText(EGradeUtil.formatNumber(professor.getPhoneNumber()));
 
         if (professor.getProfilePicture() != null) {
-            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(professor.getProfilePicture().getBytes()));
+            profileImage.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
         }
 
         return view;

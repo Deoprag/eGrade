@@ -17,6 +17,7 @@ import com.deopraglabs.egrade.model.User;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -70,7 +71,8 @@ public class LoginActivity extends AppCompatActivity {
                     case COORDENADOR:
                         final Coordinator coordinator = gson.fromJson(response, Coordinator.class);
                         intent = new Intent(LoginActivity.this, CoordinatorActivity.class);
-                        intent.putExtra("user", gson.fromJson(response, Coordinator.class));
+                        DataHolder.setCoordinator(gson.fromJson(response, Coordinator.class));
+//                        intent.putExtra("user", gson.fromJson(response, Coordinator.class));
                         startActivity(intent);
                         finish();
                         break;
@@ -78,7 +80,8 @@ public class LoginActivity extends AppCompatActivity {
                     case PROFESSOR:
                         final Professor professor = gson.fromJson(response, Professor.class);
                         intent = new Intent(LoginActivity.this, ProfessorActivity.class);
-                        intent.putExtra("user", gson.fromJson(response, Professor.class));
+                        DataHolder.setProfessor(gson.fromJson(response, Professor.class));
+//                        intent.putExtra("user", gson.fromJson(response, Professor.class));
                         startActivity(intent);
                         finish();
                         break;
@@ -86,7 +89,8 @@ public class LoginActivity extends AppCompatActivity {
                     case ALUNO:
                         final Student student = gson.fromJson(response, Student.class);
                         intent = new Intent(LoginActivity.this, StudentActivity.class);
-                        intent.putExtra("user", gson.fromJson(response, Student.class));
+                        DataHolder.setStudent(gson.fromJson(response, Student.class));
+//                        intent.putExtra("user", gson.fromJson(response, Student.class));
                         startActivity(intent);
                         finish();
                         break;

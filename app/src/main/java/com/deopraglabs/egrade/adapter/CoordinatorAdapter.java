@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +51,7 @@ public class CoordinatorAdapter extends RecyclerView.Adapter<CoordinatorAdapter.
         holder.birthDateTextView.setText(EGradeUtil.dateToString(coordinator.getBirthDate()));
         holder.activeTextView.setText(coordinator.isActive() ? "Ativo" : "Inativo");
         if (coordinator.getProfilePicture() != null) {
-            holder.profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(coordinator.getProfilePicture().getBytes()));
+            holder.profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(coordinator.getProfilePicture()));
         }
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(coordinator));
     }
@@ -65,7 +65,7 @@ public class CoordinatorAdapter extends RecyclerView.Adapter<CoordinatorAdapter.
 
         TextView nameTextView, cpfTextView, emailTextView, phoneTextView, birthDateTextView, activeTextView;
         ImageView profileImageView;
-        Button editButton;
+        ImageButton editButton;
 
         public CoordinatorViewHolder(@NonNull View itemView) {
             super(itemView);

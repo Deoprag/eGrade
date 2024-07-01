@@ -32,6 +32,7 @@ import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -69,7 +70,10 @@ public class EditStudentActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            student = (Student) intent.getSerializableExtra("student");
+//            student = (Student) intent.getSerializableExtra("student");
+            if (DataHolder.getStudent() != null) {
+                student = DataHolder.getStudent();
+            }
             coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
         }
 
@@ -102,7 +106,7 @@ public class EditStudentActivity extends AppCompatActivity {
             genderSpinner.setSelection(student.getGender().equals(Gender.M) ? 0 : student.getGender().equals(Gender.F) ? 1 : 2);
 
             if (student.getProfilePicture() != null) {
-                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
+                profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(student.getProfilePicture()));
             }
 
         } else {
@@ -260,8 +264,10 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
-                        notifyAll();
-                        finish();
+                        synchronized (getParent()){
+                            notifyAll();
+                            finish();
+                        }
                     }
                 });
             }
@@ -279,7 +285,7 @@ public class EditStudentActivity extends AppCompatActivity {
             if (student == null) {
                 registerStudent();
             } else {
-                registerStudent();
+                updateStudent();
             }
         }
     }
@@ -289,7 +295,7 @@ public class EditStudentActivity extends AppCompatActivity {
             nameEditText.setError("Nome é obrigatório");
             return false;
         }
-        if (cpfEditText.getText().toString().length() != 11) {
+        if (cpfEditText.getText().toString().length() != 14) {
             cpfEditText.setError("CPF inválido");
             return false;
         }
@@ -297,11 +303,11 @@ public class EditStudentActivity extends AppCompatActivity {
             emailEditText.setError("Email é obrigatório");
             return false;
         }
-        if (phoneEditText.getText().toString().isEmpty()) {
+        if (phoneEditText.getText().length() < 14) {
             phoneEditText.setError("Telefone é obrigatório");
             return false;
         }
-        if (birthDateEditText.getText().toString().isEmpty()) {
+        if (birthDateEditText.getText().length() != 10) {
             birthDateEditText.setError("Data de Nascimento é obrigatória");
             return false;
         }
@@ -320,7 +326,7 @@ public class EditStudentActivity extends AppCompatActivity {
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "course", String.valueOf(selectedCourse.getId()),
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
@@ -331,7 +337,9 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                        notifyAll();
+                        synchronized (getParent()){
+                            notifyAll();
+                        }
                         finish();
                     }
                 });
@@ -358,7 +366,7 @@ public class EditStudentActivity extends AppCompatActivity {
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "course", String.valueOf(selectedCourse.getId()),
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
@@ -369,8 +377,10 @@ public class EditStudentActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                        notifyAll();
-                        finish();
+                        synchronized (getParent()){
+                            notifyAll();
+                            finish();
+                        }
                     }
                 });
             }

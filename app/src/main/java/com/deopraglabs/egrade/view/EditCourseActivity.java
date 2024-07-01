@@ -179,7 +179,9 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso deletado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -229,10 +231,11 @@ public class EditCourseActivity extends AppCompatActivity {
                 subjectsIds.append(",");
             }
         }
+
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
                 "description", descriptionEditText.getText().toString(),
-                "coordinatorId", String.valueOf(coordinatorSpinner.getSelectedItemId()),
+                "coordinatorId", String.valueOf(selectedCoordinator.getId()),
                 "subjects", subjectsIds.toString()
         );
 
@@ -242,7 +245,9 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -278,7 +283,9 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -301,6 +308,8 @@ public class EditCourseActivity extends AppCompatActivity {
                 final Gson gson = new Gson();
                 Type coordinatorListType = new TypeToken<List<Coordinator>>() {}.getType();
                 coordinatorList = gson.fromJson(response, coordinatorListType);
+
+                selectedCoordinator = coordinatorList.get(0);
 
                 runOnUiThread(() -> {
                     ArrayAdapter<Coordinator> adapter = new ArrayAdapter<>(EditCourseActivity.this, android.R.layout.simple_spinner_item, coordinatorList);

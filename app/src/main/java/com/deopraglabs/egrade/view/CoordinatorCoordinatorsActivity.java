@@ -14,6 +14,7 @@ import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.adapter.CoordinatorAdapter;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -34,13 +35,14 @@ public class CoordinatorCoordinatorsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_coordinators);
+        coordinator = DataHolder.getCoordinator();
 
         coordinatorList = new ArrayList<>();
 
         adapter = new CoordinatorAdapter(this, coordinatorList, coordinatorEdit -> {
             Intent intent = new Intent(CoordinatorCoordinatorsActivity.this, EditCoordinatorActivity.class);
-            intent.putExtra("coordinator", coordinator);
-            intent.putExtra("coordinatorEdit", coordinatorEdit);
+            DataHolder.setCoordinator(coordinator);
+            DataHolder.setCoordinatorEdit(coordinatorEdit);
             startActivity(intent);
         });
 

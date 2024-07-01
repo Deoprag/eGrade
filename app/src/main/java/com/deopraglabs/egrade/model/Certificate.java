@@ -14,6 +14,6 @@ public class Certificate implements Serializable {
     private long id;
     private String justification;
     private Date date;
-    private byte[] image;
+    private String image;
     private Student student;
 }

@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityCoordinatorBinding;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class CoordinatorActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public class CoordinatorActivity extends AppCompatActivity {
         setSupportActionBar(binding.bottomAppBar);
 
         final Intent intent = getIntent();
-        coordinator = (Coordinator) intent.getSerializableExtra("user");
+        coordinator = DataHolder.getCoordinator();
 
         replaceFragment(new CoordinatorHomeFragment());
 

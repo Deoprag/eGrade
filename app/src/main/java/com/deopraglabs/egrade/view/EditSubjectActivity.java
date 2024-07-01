@@ -142,7 +142,9 @@ public class EditSubjectActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(EditSubjectActivity.this, "Matéria deletada com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()) {
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -170,7 +172,9 @@ public class EditSubjectActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(EditSubjectActivity.this, "Matéria cadastrada com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()) {
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -199,7 +203,9 @@ public class EditSubjectActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(EditSubjectActivity.this, "Matéria atualizada com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()) {
+                        notifyAll();
+                    }
                     finish();
                 });
             }

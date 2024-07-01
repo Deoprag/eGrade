@@ -12,15 +12,27 @@
         android:padding="20dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/profileImage"
+
+        <FrameLayout
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:background="@color/transparent"
-            android:padding="10dp"
-            android:paddingTop="30dp"
-            android:src="@drawable/ic_profile_placeholder"/>
+            android:layout_gravity="center">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="100dp">
+
+                <ImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:src="@drawable/ic_profile_placeholder"
+                    android:scaleType="centerCrop"/>
+            </androidx.cardview.widget.CardView>
+
+        </FrameLayout>
 
         <!-- Name Section -->
         <TextView

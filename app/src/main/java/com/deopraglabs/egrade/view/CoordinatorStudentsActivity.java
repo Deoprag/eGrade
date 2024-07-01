@@ -20,6 +20,7 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -51,8 +52,9 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
 
         adapter = new StudentAdapter(this, studentList, student -> {
             Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
-            intent.putExtra("student", student);
+//            intent.putExtra("student", student);
             intent.putExtra("coordinator", coordinator);
+            DataHolder.setStudent(student);
             startActivity(intent);
         });
 

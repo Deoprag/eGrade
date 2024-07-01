@@ -71,7 +71,7 @@ public class CoordinatorProfileFragment extends Fragment {
         phoneNumber.setText(EGradeUtil.formatNumber(coordinator.getPhoneNumber()));
 
         if (coordinator.getProfilePicture() != null) {
-            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(coordinator.getProfilePicture().getBytes()));
+            profileImage.setImageBitmap(EGradeUtil.base64ToBitmap(coordinator.getProfilePicture()));
         }
 
         return view;

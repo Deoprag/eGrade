@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +33,7 @@ import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -68,8 +70,10 @@ public class EditProfessorActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            professor = (Professor) intent.getSerializableExtra("professor");
-            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+            if (DataHolder.getProfessor() != null) {
+                professor = DataHolder.getProfessor();
+                coordinator = DataHolder.getCoordinator();
+            }
         }
 
         nameEditText = findViewById(R.id.nameEditText);
@@ -86,6 +90,10 @@ public class EditProfessorActivity extends AppCompatActivity {
         genderSpinner = findViewById(R.id.genderSpinner);
         subjectSpinner = findViewById(R.id.subjectSpinner);
 
+        if (professor.getProfilePicture() != null) {
+            profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
+        }
+
         List<String> genderOptions = new ArrayList<>();
         genderOptions.add("Feminino");
         genderOptions.add("Masculino");
@@ -101,15 +109,17 @@ public class EditProfessorActivity extends AppCompatActivity {
         if (professor != null) {
             textId.setText("Matrícula: " + professor.getId());
             nameEditText.setText(professor.getName());
-            cpfEditText.setText(professor.getCpf());
+            cpfEditText.setText(EGradeUtil.formatCpf(professor.getCpf()));
             emailEditText.setText(professor.getEmail());
-            phoneEditText.setText(professor.getPhoneNumber());
+            phoneEditText.setText(EGradeUtil.formatNumber(professor.getPhoneNumber()));
             birthDateEditText.setText(EGradeUtil.dateToString(professor.getBirthDate()));
-            passwordEditText.setText(professor.getPassword());
             activeCheckBox.setChecked(professor.isActive());
-            selectedGender = professor.getGender();
-
             genderSpinner.setSelection(genderAdapter.getPosition(professor.getGender().toString()));
+
+            if (professor.getProfilePicture() != null) {
+               profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
+            }
+
 
             genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -331,7 +341,9 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor deletado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -359,7 +371,7 @@ public class EditProfessorActivity extends AppCompatActivity {
             nameEditText.setError("Nome é obrigatório");
             return false;
         }
-        if (cpfEditText.getText().toString().length() != 11) {
+        if (cpfEditText.getText().toString().length() != 14) {
             cpfEditText.setError("CPF inválido");
             return false;
         }
@@ -367,11 +379,11 @@ public class EditProfessorActivity extends AppCompatActivity {
             emailEditText.setError("Email é obrigatório");
             return false;
         }
-        if (phoneEditText.getText().toString().isEmpty()) {
+        if (phoneEditText.getText().length() < 14) {
             phoneEditText.setError("Telefone é obrigatório");
             return false;
         }
-        if (birthDateEditText.getText().toString().isEmpty()) {
+        if (birthDateEditText.getText().length() != 10) {
             birthDateEditText.setError("Data de Nascimento é obrigatória");
             return false;
         }
@@ -390,7 +402,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "subjects",
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
@@ -399,7 +411,9 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }
@@ -425,7 +439,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "subjects", String.valueOf(selectedSubject.getId()),
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
@@ -434,7 +448,9 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Professor atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (getParent()){
+                        notifyAll();
+                    }
                     finish();
                 });
             }

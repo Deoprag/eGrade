@@ -18,6 +18,7 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -50,8 +51,9 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(Professor professor) {
                 Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
-                intent.putExtra("professor", professor);
+//                intent.putExtra("professor", professor);
                 intent.putExtra("coordinator", coordinator);
+                DataHolder.setProfessor(professor);
                 startActivity(intent);
             }
         });

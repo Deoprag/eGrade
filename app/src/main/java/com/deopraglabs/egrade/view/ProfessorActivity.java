@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.databinding.ActivityProfessorBinding;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class ProfessorActivity extends AppCompatActivity {
 
@@ -25,7 +26,7 @@ public class ProfessorActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         final Intent intent = getIntent();
-        professor = (Professor) intent.getSerializableExtra("user");
+        professor = DataHolder.getProfessor();
 
         replaceFragment(new ProfessorHomeFragment());
         binding.bottomNavigationView.setBackground(null);

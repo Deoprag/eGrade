@@ -30,6 +30,7 @@ import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 
@@ -62,8 +63,8 @@ public class EditCoordinatorActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            coordinatorEdit = (Coordinator) intent.getSerializableExtra("coordinatorEdit");
-            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+            coordinatorEdit = DataHolder.getCoordinatorEdit();
+            coordinator = DataHolder.getCoordinator();
         }
 
         nameEditText = findViewById(R.id.nameEditText);
@@ -81,6 +82,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.passwordEditText);
 
         setupGenderSpinner();
+
         requestStoragePermission();
 
         if (coordinatorEdit != null) {
@@ -94,7 +96,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             genderSpinner.setSelection(coordinatorEdit.getGender().equals(Gender.M) ? 0 : coordinatorEdit.getGender().equals(Gender.F) ? 1 : 2);
 
             if (coordinatorEdit.getProfilePicture() != null) {
-                profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(coordinatorEdit.getProfilePicture().getBytes()));
+                profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(coordinatorEdit.getProfilePicture()));
             }
 
         } else {
@@ -104,9 +106,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         }
 
         deleteButton.setOnClickListener(v -> deleteCoordinator());
-
         saveButton.setOnClickListener(v -> saveCoordinator());
-
         cpfEditText.addTextChangedListener(new TextWatcher() {
 
             private boolean isUpdating = false;
@@ -252,7 +252,9 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Coordenador deletado com sucesso!", Toast.LENGTH_LONG).show();
-                        notifyAll();
+                        synchronized (getParent()){
+                            notifyAll();
+                        }
                         finish();
                     }
                 });
@@ -289,11 +291,11 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             emailEditText.setError("Email é obrigatório");
             return false;
         }
-        if (phoneEditText.getText().toString().isEmpty()) {
+        if (phoneEditText.getText().length() < 14) {
             phoneEditText.setError("Telefone é obrigatório");
             return false;
         }
-        if (birthDateEditText.getText().toString().isEmpty()) {
+        if (birthDateEditText.getText().length() != 10) {
             birthDateEditText.setError("Data de Nascimento é obrigatória");
             return false;
         }
@@ -311,7 +313,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.DEFAULT) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
@@ -322,7 +324,9 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "Coordenador cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                        notifyAll();
+                        synchronized (getParent()){
+                            notifyAll();
+                        }
                         finish();
                     }
                 });
@@ -348,7 +352,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "profilePicture", selectedPhoto != null ? Base64.encodeToString(EGradeUtil.bitmapToByteArray(selectedPhoto), Base64.URL_SAFE) : ""
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
         HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
@@ -357,7 +361,9 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Coordenador atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                    notifyAll();
+                    synchronized (this) {
+                        notifyAll();
+                    }
                     finish();
                 });
             }

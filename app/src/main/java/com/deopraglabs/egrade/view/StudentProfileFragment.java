@@ -73,7 +73,7 @@ public class StudentProfileFragment extends Fragment {
         phoneNumber.setText(EGradeUtil.formatNumber(student.getPhoneNumber()));
 
         if (student.getProfilePicture() != null) {
-            profileImage.setImageBitmap(EGradeUtil.convertImageFromByte(student.getProfilePicture().getBytes()));
+            profileImage.setImageBitmap(EGradeUtil.base64ToBitmap(student.getProfilePicture()));
         }
 
         return view;

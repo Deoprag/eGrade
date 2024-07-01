@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +52,7 @@ public class ProfessorAdapter extends RecyclerView.Adapter<ProfessorAdapter.Prof
         holder.birthDateTextView.setText(EGradeUtil.dateToString(professor.getBirthDate()));
         holder.activeTextView.setText(professor.isActive() ? "Ativo" : "Inativo");
         if (professor.getProfilePicture() != null) {
-            holder.profileImageView.setImageBitmap(EGradeUtil.convertImageFromByte(professor.getProfilePicture().getBytes()));
+            holder.profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
         }
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(professor));
     }
@@ -65,7 +66,7 @@ public class ProfessorAdapter extends RecyclerView.Adapter<ProfessorAdapter.Prof
 
         TextView nameTextView, cpfTextView, emailTextView, phoneTextView, birthDateTextView, activeTextView;
         ImageView profileImageView;
-        Button editButton;
+        ImageButton editButton;
 
         public ProfessorViewHolder(@NonNull View itemView) {
             super(itemView);

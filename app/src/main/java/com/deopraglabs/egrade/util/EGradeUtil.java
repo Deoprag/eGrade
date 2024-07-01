@@ -2,17 +2,23 @@ package com.deopraglabs.egrade.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
+import android.content.Context;
+import android.content.ContextWrapper;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class EGradeUtil {
 
 //    public static final String URL = "http://10.30.9.230:8080";
-    public static final String URL = "http://192.168.1.172:8080";
+    public static final String URL = "http://192.168.1.2:8080";
 
     public static String formatCpf(String oldCpf) {
         return oldCpf.substring(0, 3) + '.' + oldCpf.substring(3, 6) + '.' + oldCpf.substring(6, 9) + '-' + oldCpf.substring(9);
@@ -42,13 +48,15 @@ public class EGradeUtil {
         return sdf.format(date);
     }
 
-    public static Bitmap convertImageFromByte(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    public static String bitmapToBase64(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 75, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
-    public static byte[] bitmapToByteArray(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        return byteArrayOutputStream.toByteArray();
+    public static Bitmap base64ToBitmap(String base64String) {
+        byte[] decodedBytes = Base64.decode(base64String, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
