@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Course;
+import com.deopraglabs.egrade.model.Subject;
 
 import java.util.List;
 
@@ -46,11 +47,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
         Course course = courseList.get(position);
+        StringBuilder sb = new StringBuilder();
 
         holder.nameTextView.setText(course.getName());
         holder.descriptionTextView.setText(course.getDescription());
         holder.coordinatorTextView.setText(course.getCoordinator().getName());
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(course));
+        for (Subject subject: course.getSubjects()) {
+            sb.append(subject.getName()).append(", ");
+        }
+        holder.subjectsTextView.setText("Matérias: " + sb.substring(0, sb.length() - 2));
     }
 
     @Override
@@ -60,7 +66,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
 
-        TextView nameTextView, descriptionTextView, coordinatorTextView;
+        TextView nameTextView, descriptionTextView, coordinatorTextView, subjectsTextView;
         Button editButton;
 
         public CourseViewHolder(@NonNull View itemView) {
@@ -68,6 +74,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             nameTextView = itemView.findViewById(R.id.nameTextView);
             descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
             coordinatorTextView = itemView.findViewById(R.id.coordinatorTextView);
+            subjectsTextView = itemView.findViewById(R.id.subjectsTextView);
             editButton = itemView.findViewById(R.id.editButton);
         }
     }
