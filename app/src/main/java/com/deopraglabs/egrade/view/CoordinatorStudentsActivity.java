@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,7 +34,6 @@ import java.util.List;
 public class CoordinatorStudentsActivity extends AppCompatActivity {
 
     private Coordinator coordinator;
-
     private RecyclerView recyclerView;
     private StudentAdapter adapter;
     private List<Student> studentList;
@@ -45,17 +45,23 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_students);
 
-        coordinator = (Coordinator) getIntent().getSerializableExtra("coordinator");
+        // Obter coordenador da DataHolder
+        coordinator = DataHolder.getInstance().getCoordinator();
+
+        if (coordinator == null) {
+            Toast.makeText(this, "Coordenador não encontrado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         studentList = new ArrayList<>();
         courseList = new ArrayList<>();
 
         adapter = new StudentAdapter(this, studentList, student -> {
             Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
-//            intent.putExtra("student", student);
-            intent.putExtra("coordinator", coordinator);
-            DataHolder.setStudent(student);
-            startActivity(intent);
+            DataHolder.getInstance().setStudent(student);
+            DataHolder.getInstance().setCoordinator(coordinator);
+            startActivityForResult(intent, 1);
         });
 
         loadCourses();
@@ -68,9 +74,10 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
 
         Button addStudentButton = findViewById(R.id.addStudentButton);
         addStudentButton.setOnClickListener(v -> {
+            DataHolder.getInstance().setStudent(null);
+            DataHolder.getInstance().setCoordinator(coordinator);
             Intent intent = new Intent(CoordinatorStudentsActivity.this, EditStudentActivity.class);
-            intent.putExtra("coordinator", coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         });
     }
 
@@ -85,10 +92,11 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
                 Type courseListType = new TypeToken<List<Course>>() {}.getType();
                 courseList = gson.fromJson(response, courseListType);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+                runOnUiThread(() -> {
+                    if (courseList != null && !courseList.isEmpty()) {
                         setupCourseSpinner();
+                    } else {
+                        Toast.makeText(CoordinatorStudentsActivity.this, "Nenhum curso encontrado", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -96,12 +104,13 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
             @Override
             public void onFailure(String error) {
                 Log.e("Erro", error);
+                runOnUiThread(() -> Toast.makeText(CoordinatorStudentsActivity.this, "Erro ao carregar cursos", Toast.LENGTH_SHORT).show());
             }
         });
     }
 
     private void setupCourseSpinner() {
-        if (courseList == null) {
+        if (courseList == null || courseList.isEmpty()) {
             return;
         }
 
@@ -144,7 +153,7 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
                         studentList.addAll(students);
                         adapter.notifyDataSetChanged();
                     } else {
-                        Log.e("Erro", "Lista de estudantes retornada é nula");
+                        Toast.makeText(CoordinatorStudentsActivity.this, "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -152,7 +161,19 @@ public class CoordinatorStudentsActivity extends AppCompatActivity {
             @Override
             public void onFailure(String error) {
                 Log.e("Erro", error);
+                runOnUiThread(() -> Toast.makeText(CoordinatorStudentsActivity.this, "Erro ao carregar estudantes", Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            int selectedPosition = courseSpinner.getSelectedItemPosition();
+            if (selectedPosition >= 0 && selectedPosition < courseList.size()) {
+                loadStudentsByCourse(courseList.get(selectedPosition));
+            }
+        }
     }
 }

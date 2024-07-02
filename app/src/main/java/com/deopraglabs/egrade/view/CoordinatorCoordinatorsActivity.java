@@ -35,14 +35,14 @@ public class CoordinatorCoordinatorsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_coordinators);
-        coordinator = DataHolder.getCoordinator();
 
+        coordinator = DataHolder.getInstance().getCoordinator();
         coordinatorList = new ArrayList<>();
 
         adapter = new CoordinatorAdapter(this, coordinatorList, coordinatorEdit -> {
             Intent intent = new Intent(CoordinatorCoordinatorsActivity.this, EditCoordinatorActivity.class);
-            DataHolder.setCoordinator(coordinator);
-            DataHolder.setCoordinatorEdit(coordinatorEdit);
+            DataHolder.getInstance().setCoordinatorEdit(coordinatorEdit);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 
@@ -53,7 +53,8 @@ public class CoordinatorCoordinatorsActivity extends AppCompatActivity {
         Button addCoordinatorButton = findViewById(R.id.addCoordinatorButton);
         addCoordinatorButton.setOnClickListener(v -> {
             Intent intent = new Intent(CoordinatorCoordinatorsActivity.this, EditCoordinatorActivity.class);
-            intent.putExtra("coordinator", coordinator);
+            DataHolder.getInstance().setCoordinatorEdit(null);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 
@@ -88,5 +89,13 @@ public class CoordinatorCoordinatorsActivity extends AppCompatActivity {
                 Log.e("Erro", error);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            loadCoordinators();
+        }
     }
 }

@@ -12,25 +12,16 @@ import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class CoordinatorRegisterPeopleFragment extends Fragment {
 
     private Coordinator coordinator;
 
-    public static CoordinatorRegisterPeopleFragment newInstance(Coordinator coordinator) {
-        CoordinatorRegisterPeopleFragment fragment = new CoordinatorRegisterPeopleFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", coordinator);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            coordinator = (Coordinator) getArguments().getSerializable("user");
-        }
+        coordinator = DataHolder.getInstance().getCoordinator();
     }
 
     @Override
@@ -49,33 +40,24 @@ public class CoordinatorRegisterPeopleFragment extends Fragment {
         }
 
         CardView cardViewCoordenador = view.findViewById(R.id.cardViewCoordenador);
-        cardViewCoordenador.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CoordinatorCoordinatorsActivity.class);
-                intent.putExtra("coordinator", coordinator);
-                startActivity(intent);
-            }
+        cardViewCoordenador.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CoordinatorCoordinatorsActivity.class);
+            DataHolder.getInstance().setCoordinator(coordinator);
+            startActivity(intent);
         });
 
         CardView cardViewProfessor = view.findViewById(R.id.cardViewProfessor);
-        cardViewProfessor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CoordinatorProfessorsActivity.class);
-                intent.putExtra("coordinator", coordinator);
-                startActivity(intent);
-            }
+        cardViewProfessor.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CoordinatorProfessorsActivity.class);
+            DataHolder.getInstance().setCoordinator(coordinator);
+            startActivity(intent);
         });
 
         CardView cardViewAluno = view.findViewById(R.id.cardViewAluno);
-        cardViewAluno.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CoordinatorStudentsActivity.class);
-                intent.putExtra("coordinator", coordinator);
-                startActivity(intent);
-            }
+        cardViewAluno.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), CoordinatorStudentsActivity.class);
+            DataHolder.getInstance().setCoordinator(coordinator);
+            startActivity(intent);
         });
 
         return view;

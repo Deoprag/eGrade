@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -68,14 +67,10 @@ public class EditStudentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_student);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-//            student = (Student) intent.getSerializableExtra("student");
-            if (DataHolder.getStudent() != null) {
-                student = DataHolder.getStudent();
-            }
-            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+        if (DataHolder.getInstance().getStudent() != null) {
+            student = DataHolder.getInstance().getStudent();
         }
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         nameEditText = findViewById(R.id.nameEditText);
         textId = findViewById(R.id.textId);
@@ -104,10 +99,7 @@ public class EditStudentActivity extends AppCompatActivity {
             birthDateEditText.setText(EGradeUtil.dateToString(student.getBirthDate()));
             activeCheckBox.setChecked(student.isActive());
             genderSpinner.setSelection(student.getGender().equals(Gender.M) ? 0 : student.getGender().equals(Gender.F) ? 1 : 2);
-
-            if (student.getProfilePicture() != null) {
-                profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(student.getProfilePicture()));
-            }
+            if (student.getProfilePicture() != null) profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(student.getProfilePicture()));
 
         } else {
             textId.setVisibility(View.INVISIBLE);
@@ -239,45 +231,13 @@ public class EditStudentActivity extends AppCompatActivity {
             }
         });
 
-        profileImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openImageChooser();
-            }
-        });
+        profileImageView.setOnClickListener(v -> openImageChooser());
     }
 
     private void openImageChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
-    }
-
-    private void deleteStudent() {
-        final String url = EGradeUtil.URL + "/api/v1/student/delete/" + student.getId();
-
-        HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
-                        synchronized (getParent()){
-                            notifyAll();
-                            finish();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao deletar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
-            }
-        });
     }
 
     private void saveStudent() {
@@ -314,87 +274,8 @@ public class EditStudentActivity extends AppCompatActivity {
         return true;
     }
 
-    private void registerStudent() {
-        final String url = EGradeUtil.URL + "/api/v1/student/save";
-        final String body = HttpUtil.generateRequestBody(
-                "name", nameEditText.getText().toString(),
-                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
-                "gender", selectedGender.toString(),
-                "email", emailEditText.getText().toString(),
-                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
-                "birthDate", birthDateEditText.getText().toString(),
-                "password", passwordEditText.getText().toString(),
-                "active", Boolean.toString(activeCheckBox.isChecked()),
-                "course", String.valueOf(selectedCourse.getId()),
-                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
-        );
-
-        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                        synchronized (getParent()){
-                            notifyAll();
-                        }
-                        finish();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void updateStudent() {
-        final String url = EGradeUtil.URL + "/api/v1/student/update";
-        final String body = HttpUtil.generateRequestBody(
-                "id", String.valueOf(student.getId()),
-                "name", nameEditText.getText().toString(),
-                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
-                "gender", selectedGender.toString(),
-                "email", emailEditText.getText().toString(),
-                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
-                "birthDate", birthDateEditText.getText().toString(),
-                "password", passwordEditText.getText().toString(),
-                "active", Boolean.toString(activeCheckBox.isChecked()),
-                "course", String.valueOf(selectedCourse.getId()),
-                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
-        );
-
-        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Usuário atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                        synchronized (getParent()){
-                            notifyAll();
-                            finish();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao atualizar usuário! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
-            }
-        });
-    }
-
     private void loadCourses() {
-        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + coordinator.getId();
+        final String url = EGradeUtil.URL + "/api/v1/course/findByCoordinatorId/" + DataHolder.getInstance().getCoordinator().getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
@@ -405,13 +286,10 @@ public class EditStudentActivity extends AppCompatActivity {
                 }.getType();
                 courseList = gson.fromJson(response, courseListType);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setupCourseSpinner();
-                        if (student != null) {
-                            courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
-                        }
+                runOnUiThread(() -> {
+                    setupCourseSpinner();
+                    if (student != null) {
+                        courseSpinner.setSelection(courseList.indexOf(student.getCourse()));
                     }
                 });
             }
@@ -499,5 +377,99 @@ public class EditStudentActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void registerStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/student/save";
+        final String body = HttpUtil.generateRequestBody(
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "password", passwordEditText.getText().toString(),
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "course", String.valueOf(selectedCourse.getId()),
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
+        );
+
+        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Estudante cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void updateStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/student/update";
+        final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(student.getId()),
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "password", passwordEditText.getText().toString(),
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "course", String.valueOf(selectedCourse.getId()),
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
+        );
+
+        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Estudante atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao atualizar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void deleteStudent() {
+        final String url = EGradeUtil.URL + "/api/v1/student/delete/" + student.getId();
+
+        HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Estudante deletado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao deletar estudante! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
     }
 }

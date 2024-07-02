@@ -26,20 +26,19 @@ public class CoordinatorActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.bottomAppBar);
 
-        final Intent intent = getIntent();
-        coordinator = DataHolder.getCoordinator();
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         replaceFragment(new CoordinatorHomeFragment());
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
-
+            DataHolder.getInstance().setCoordinator(coordinator);
             if (item.getItemId() == R.id.coordinator_register_people) {
-                selectedFragment = CoordinatorRegisterPeopleFragment.newInstance(coordinator);
+                selectedFragment = new CoordinatorRegisterPeopleFragment();
             } else if (item.getItemId() == R.id.coordinator_profile) {
-                selectedFragment = CoordinatorProfileFragment.newInstance(coordinator);
+                selectedFragment = new CoordinatorProfileFragment();
             } else if (item.getItemId() == R.id.coordinator_register_other) {
-                selectedFragment = CoordinatorRegisterOtherFragment.newInstance(coordinator);
+                selectedFragment = new CoordinatorRegisterOtherFragment();
             } else {
                 selectedFragment = new CoordinatorHomeFragment();
             }

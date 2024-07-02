@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 
 public class CoordinatorProfileFragment extends Fragment {
@@ -24,20 +25,10 @@ public class CoordinatorProfileFragment extends Fragment {
 
     private Button btnEditData;
 
-    public static CoordinatorProfileFragment newInstance(Coordinator coordinator) {
-        CoordinatorProfileFragment fragment = new CoordinatorProfileFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", coordinator);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            coordinator = (Coordinator) getArguments().getSerializable("user");
-        }
+        coordinator = DataHolder.getInstance().getCoordinator();
     }
 
     @Override

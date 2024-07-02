@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -61,11 +60,10 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_coordinator);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            coordinatorEdit = DataHolder.getCoordinatorEdit();
-            coordinator = DataHolder.getCoordinator();
+        if (DataHolder.getInstance().getCoordinatorEdit() != null) {
+            coordinatorEdit = DataHolder.getInstance().getCoordinatorEdit();
         }
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         nameEditText = findViewById(R.id.nameEditText);
         textId = findViewById(R.id.textId);
@@ -94,10 +92,7 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             birthDateEditText.setText(EGradeUtil.dateToString(coordinatorEdit.getBirthDate()));
             activeCheckBox.setChecked(coordinatorEdit.isActive());
             genderSpinner.setSelection(coordinatorEdit.getGender().equals(Gender.M) ? 0 : coordinatorEdit.getGender().equals(Gender.F) ? 1 : 2);
-
-            if (coordinatorEdit.getProfilePicture() != null) {
-                profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(coordinatorEdit.getProfilePicture()));
-            }
+            if (coordinatorEdit.getProfilePicture() != null) profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(coordinatorEdit.getProfilePicture()));
 
         } else {
             textId.setVisibility(View.INVISIBLE);
@@ -241,33 +236,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    private void deleteCoordinator() {
-        final String url = EGradeUtil.URL + "/api/v1/coordinatorEdit/delete/" + coordinatorEdit.getId();
-
-        HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Coordenador deletado com sucesso!", Toast.LENGTH_LONG).show();
-                        synchronized (getParent()){
-                            notifyAll();
-                        }
-                        finish();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao deletar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
-            }
-        });
-    }
-
     private void saveCoordinator() {
         if (validateInputs()) {
             if (coordinatorEdit == null) {
@@ -300,82 +268,6 @@ public class EditCoordinatorActivity extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    private void registerCoordinator() {
-        final String url = EGradeUtil.URL + "/api/v1/coordinator/save";
-        final String body = HttpUtil.generateRequestBody(
-                "name", nameEditText.getText().toString(),
-                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
-                "gender", selectedGender.toString(),
-                "email", emailEditText.getText().toString(),
-                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
-                "birthDate", birthDateEditText.getText().toString(),
-                "password", passwordEditText.getText().toString(),
-                "active", Boolean.toString(activeCheckBox.isChecked()),
-                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
-        );
-
-        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Coordenador cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                        synchronized (getParent()){
-                            notifyAll();
-                        }
-                        finish();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao cadastrar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
-            }
-        });
-    }
-
-    private void updateCoordinator() {
-        final String url = EGradeUtil.URL + "/api/v1/coordinator/update";
-        final String body = HttpUtil.generateRequestBody(
-                "id", String.valueOf(coordinatorEdit.getId()),
-                "name", nameEditText.getText().toString(),
-                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
-                "gender", selectedGender.toString(),
-                "email", emailEditText.getText().toString(),
-                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
-                "birthDate", birthDateEditText.getText().toString(),
-                "password", passwordEditText.getText().toString(),
-                "active", Boolean.toString(activeCheckBox.isChecked()),
-                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
-        );
-
-        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
-            @Override
-            public void onSuccess(String response) {
-                Log.d("Resposta", response);
-                runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Coordenador atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                    synchronized (this) {
-                        notifyAll();
-                    }
-                    finish();
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Erro ao atualizar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
-                    Log.e("Erro", error);
-                });
-            }
-        });
     }
 
     private void setupGenderSpinner() {
@@ -427,5 +319,99 @@ public class EditCoordinatorActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void registerCoordinator() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinator/save";
+        final String body = HttpUtil.generateRequestBody(
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "password", passwordEditText.getText().toString(),
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
+        );
+
+        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Coordenador cadastrado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao cadastrar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void updateCoordinator() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinator/update";
+        final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(coordinatorEdit.getId()),
+                "name", nameEditText.getText().toString(),
+                "cpf", cpfEditText.getText().toString().replaceAll("[-.]", ""),
+                "gender", selectedGender.toString(),
+                "email", emailEditText.getText().toString(),
+                "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
+                "birthDate", birthDateEditText.getText().toString(),
+                "password", passwordEditText.getText().toString(),
+                "active", Boolean.toString(activeCheckBox.isChecked()),
+                "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
+        );
+
+        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Coordenador atualizado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Erro ao atualizar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
+                    Log.e("Erro", error);
+                });
+            }
+        });
+    }
+
+    private void deleteCoordinator() {
+        final String url = EGradeUtil.URL + "/api/v1/coordinatorEdit/delete/" + coordinatorEdit.getId();
+
+        HttpUtil.sendRequest(url, Method.POST, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Coordenador deletado com sucesso!", Toast.LENGTH_LONG).show();
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao deletar coordenador! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
     }
 }

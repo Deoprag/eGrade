@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
@@ -52,6 +53,8 @@ public class CoordinatorAdapter extends RecyclerView.Adapter<CoordinatorAdapter.
         holder.activeTextView.setText(coordinator.isActive() ? "Ativo" : "Inativo");
         if (coordinator.getProfilePicture() != null) {
             holder.profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(coordinator.getProfilePicture()));
+        } else {
+            holder.profileImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_profile_placeholder));
         }
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(coordinator));
     }

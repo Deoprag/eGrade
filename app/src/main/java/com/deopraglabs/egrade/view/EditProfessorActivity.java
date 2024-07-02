@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,10 +28,10 @@ import androidx.core.content.ContextCompat;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
-import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
@@ -68,13 +67,10 @@ public class EditProfessorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_professor);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            if (DataHolder.getProfessor() != null) {
-                professor = DataHolder.getProfessor();
-                coordinator = DataHolder.getCoordinator();
-            }
+        if (DataHolder.getInstance().getProfessor() != null) {
+            professor = DataHolder.getInstance().getProfessor();
         }
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         nameEditText = findViewById(R.id.nameEditText);
         textId = findViewById(R.id.textId);
@@ -89,10 +85,6 @@ public class EditProfessorActivity extends AppCompatActivity {
         activeCheckBox = findViewById(R.id.activeCheckBox);
         genderSpinner = findViewById(R.id.genderSpinner);
         subjectSpinner = findViewById(R.id.subjectSpinner);
-
-        if (professor.getProfilePicture() != null) {
-            profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
-        }
 
         List<String> genderOptions = new ArrayList<>();
         genderOptions.add("Feminino");
@@ -115,11 +107,7 @@ public class EditProfessorActivity extends AppCompatActivity {
             birthDateEditText.setText(EGradeUtil.dateToString(professor.getBirthDate()));
             activeCheckBox.setChecked(professor.isActive());
             genderSpinner.setSelection(genderAdapter.getPosition(professor.getGender().toString()));
-
-            if (professor.getProfilePicture() != null) {
-               profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
-            }
-
+            if (professor.getProfilePicture() != null) profileImageView.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
 
             genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
@@ -274,7 +262,7 @@ public class EditProfessorActivity extends AppCompatActivity {
     }
 
     private void loadSubjects() {
-        final String url = EGradeUtil.URL + "/api/v1/subject/findByCoordinatorId/" + coordinator.getId();
+        final String url = EGradeUtil.URL + "/api/v1/subject/findByCoordinatorId/" + DataHolder.getInstance().getCoordinator().getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
@@ -284,12 +272,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
                 subjectList = gson.fromJson(response, subjectListType);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setupSubjectSpinner();
-                    }
-                });
+                runOnUiThread(() -> setupSubjectSpinner());
             }
 
             @Override
@@ -344,6 +327,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                     synchronized (getParent()){
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }
@@ -414,6 +398,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                     synchronized (getParent()){
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }
@@ -451,6 +436,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                     synchronized (getParent()){
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }

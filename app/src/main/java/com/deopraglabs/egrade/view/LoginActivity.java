@@ -72,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                         final Coordinator coordinator = gson.fromJson(response, Coordinator.class);
                         intent = new Intent(LoginActivity.this, CoordinatorActivity.class);
                         DataHolder.setCoordinator(gson.fromJson(response, Coordinator.class));
-//                        intent.putExtra("user", gson.fromJson(response, Coordinator.class));
                         startActivity(intent);
                         finish();
                         break;
@@ -81,7 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                         final Professor professor = gson.fromJson(response, Professor.class);
                         intent = new Intent(LoginActivity.this, ProfessorActivity.class);
                         DataHolder.setProfessor(gson.fromJson(response, Professor.class));
-//                        intent.putExtra("user", gson.fromJson(response, Professor.class));
                         startActivity(intent);
                         finish();
                         break;
@@ -90,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                         final Student student = gson.fromJson(response, Student.class);
                         intent = new Intent(LoginActivity.this, StudentActivity.class);
                         DataHolder.setStudent(gson.fromJson(response, Student.class));
-//                        intent.putExtra("user", gson.fromJson(response, Student.class));
                         startActivity(intent);
                         finish();
                         break;

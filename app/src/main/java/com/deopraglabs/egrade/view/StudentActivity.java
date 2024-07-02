@@ -25,8 +25,7 @@ public class StudentActivity extends AppCompatActivity {
         binding = ActivityStudentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        final Intent intent = getIntent();
-        student = DataHolder.getStudent();
+        student = DataHolder.getInstance().getStudent();
 
         replaceFragment(new StudentHomeFragment());
         binding.bottomNavigationView.setBackground(null);

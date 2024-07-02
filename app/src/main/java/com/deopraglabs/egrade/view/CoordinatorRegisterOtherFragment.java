@@ -12,25 +12,16 @@ import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Coordinator;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class CoordinatorRegisterOtherFragment extends Fragment {
 
     private Coordinator coordinator;
 
-    public static CoordinatorRegisterOtherFragment newInstance(Coordinator coordinator) {
-        CoordinatorRegisterOtherFragment fragment = new CoordinatorRegisterOtherFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", coordinator);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            coordinator = (Coordinator) getArguments().getSerializable("user");
-        }
+        coordinator = DataHolder.getInstance().getCoordinator();
     }
 
     @Override
@@ -51,14 +42,14 @@ public class CoordinatorRegisterOtherFragment extends Fragment {
         CardView cardViewMateria = view.findViewById(R.id.cardViewMateria);
         cardViewMateria.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), CoordinatorSubjectsActivity.class);
-            intent.putExtra("user", coordinator);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 
         CardView cardViewCurso = view.findViewById(R.id.cardViewCurso);
         cardViewCurso.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), CoordinatorCourseActivity.class);
-                intent.putExtra("user", coordinator);
+                DataHolder.getInstance().setCoordinator(coordinator);
                 startActivity(intent);
         });
 

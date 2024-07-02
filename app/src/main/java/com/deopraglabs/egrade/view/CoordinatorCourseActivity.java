@@ -15,6 +15,7 @@ import com.deopraglabs.egrade.adapter.CourseAdapter;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -36,13 +37,13 @@ public class CoordinatorCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_course);
 
-        coordinator = (Coordinator) getIntent().getSerializableExtra("user");
+        coordinator = DataHolder.getInstance().getCoordinator();
         courseList = new ArrayList<>();
 
         adapter = new CourseAdapter(this, courseList, course -> {
-            // Handle click event if needed
             Intent intent = new Intent(CoordinatorCourseActivity.this, EditCourseActivity.class);
-            intent.putExtra("course", course);
+            DataHolder.getInstance().setCourse(course);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 
@@ -53,7 +54,8 @@ public class CoordinatorCourseActivity extends AppCompatActivity {
         Button addCourseButton = findViewById(R.id.addCourseButton);
         addCourseButton.setOnClickListener(v -> {
             Intent intent = new Intent(CoordinatorCourseActivity.this, EditCourseActivity.class);
-            intent.putExtra("coordinator", coordinator);
+            DataHolder.getInstance().setCourse(null);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 

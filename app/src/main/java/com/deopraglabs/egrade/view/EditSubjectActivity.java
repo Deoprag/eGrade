@@ -1,24 +1,24 @@
 package com.deopraglabs.egrade.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.model.Coordinator;
-import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.model.Subject;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -44,11 +44,10 @@ public class EditSubjectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_subject);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            subject = (Subject) intent.getSerializableExtra("subject");
-            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+        if (DataHolder.getInstance().getSubject() != null) {
+            subject = DataHolder.getInstance().getSubject();
         }
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         textId = findViewById(R.id.textId);
         nameEditText = findViewById(R.id.nameEditText);
@@ -145,6 +144,7 @@ public class EditSubjectActivity extends AppCompatActivity {
                     synchronized (getParent()) {
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }
@@ -175,6 +175,7 @@ public class EditSubjectActivity extends AppCompatActivity {
                     synchronized (getParent()) {
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }
@@ -206,6 +207,7 @@ public class EditSubjectActivity extends AppCompatActivity {
                     synchronized (getParent()) {
                         notifyAll();
                     }
+                    DataHolder.getInstance().setCoordinator(coordinator);
                     finish();
                 });
             }

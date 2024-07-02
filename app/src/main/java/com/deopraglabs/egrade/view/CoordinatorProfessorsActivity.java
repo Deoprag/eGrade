@@ -42,20 +42,16 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_professors);
 
-        coordinator = (Coordinator) getIntent().getSerializableExtra("coordinator");
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         professorList = new ArrayList<>();
         courseList = new ArrayList<>();
 
-        adapter = new ProfessorAdapter(this, professorList, new ProfessorAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Professor professor) {
-                Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
-//                intent.putExtra("professor", professor);
-                intent.putExtra("coordinator", coordinator);
-                DataHolder.setProfessor(professor);
-                startActivity(intent);
-            }
+        adapter = new ProfessorAdapter(this, professorList, professor -> {
+            Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
+            DataHolder.getInstance().setProfessor(professor);
+            DataHolder.getInstance().setCoordinator(coordinator);
+            startActivity(intent);
         });
 
         loadProfessors();
@@ -64,14 +60,13 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        courseSpinner = findViewById(R.id.courseSpinner);
-
         Button addProfessorButton = findViewById(R.id.addProfessorButton);
         addProfessorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
-                intent.putExtra("coordinator", coordinator);
+                DataHolder.getInstance().setProfessor(null);
+                DataHolder.getInstance().setCoordinator(coordinator);
                 startActivity(intent);
             }
         });
@@ -79,7 +74,7 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
     }
 
     private void loadProfessors() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/findAllByCoordinator/" + coordinator.getId();
+        final String url = EGradeUtil.URL + "/api/v1/professor/findAllByCoordinator/" + DataHolder.getInstance().getCoordinator().getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
@@ -105,5 +100,13 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
                 Log.e("Erro", error);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            loadProfessors();
+        }
     }
 }

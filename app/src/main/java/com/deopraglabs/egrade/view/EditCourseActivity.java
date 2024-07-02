@@ -1,6 +1,5 @@
 package com.deopraglabs.egrade.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +21,7 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Subject;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -55,11 +55,10 @@ public class EditCourseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_course);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            course = (Course) intent.getSerializableExtra("course");
-            coordinator = (Coordinator) intent.getSerializableExtra("coordinator");
+        if (DataHolder.getInstance().getCourse() != null) {
+            course = DataHolder.getInstance().getCourse();
         }
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         nameEditText = findViewById(R.id.nameEditText);
         textId = findViewById(R.id.textId);

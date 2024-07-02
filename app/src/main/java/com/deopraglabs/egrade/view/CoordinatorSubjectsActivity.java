@@ -3,11 +3,7 @@ package com.deopraglabs.egrade.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,9 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.adapter.SubjectAdapter;
 import com.deopraglabs.egrade.model.Coordinator;
-import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Subject;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
 import com.google.gson.Gson;
@@ -42,15 +39,15 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coordinator_subjects);
 
-        coordinator = (Coordinator) getIntent().getSerializableExtra("user");
+        coordinator = DataHolder.getInstance().getCoordinator();
 
         subjectList = new ArrayList<>();
         courseList = new ArrayList<>();
 
         adapter = new SubjectAdapter(this, subjectList, subject -> {
             Intent intent = new Intent(CoordinatorSubjectsActivity.this, EditSubjectActivity.class);
-            intent.putExtra("subject", subject);
-            intent.putExtra("coordinator", coordinator);
+            DataHolder.getInstance().setSubject(subject);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
 
@@ -63,7 +60,8 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
         Button addSubjectButton = findViewById(R.id.addSubjectButton);
         addSubjectButton.setOnClickListener(v -> {
             Intent intent = new Intent(CoordinatorSubjectsActivity.this, EditSubjectActivity.class);
-            intent.putExtra("coordinator", coordinator);
+            DataHolder.getInstance().setSubject(null);
+            DataHolder.getInstance().setCoordinator(coordinator);
             startActivity(intent);
         });
     }

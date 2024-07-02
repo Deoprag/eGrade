@@ -25,8 +25,7 @@ public class ProfessorActivity extends AppCompatActivity {
         binding = ActivityProfessorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        final Intent intent = getIntent();
-        professor = DataHolder.getProfessor();
+        professor = DataHolder.getInstance().getProfessor();
 
         replaceFragment(new ProfessorHomeFragment());
         binding.bottomNavigationView.setBackground(null);
