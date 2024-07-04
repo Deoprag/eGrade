@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 
 public class ProfessorProfileFragment extends Fragment {
@@ -24,20 +25,10 @@ public class ProfessorProfileFragment extends Fragment {
 
     private Button btnEditData;
 
-    public static ProfessorProfileFragment newInstance(Professor professor) {
-        ProfessorProfileFragment fragment = new ProfessorProfileFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", professor);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            professor = (Professor) getArguments().getSerializable("user");
-        }
+        professor = DataHolder.getInstance().getProfessor();
     }
 
     @Override

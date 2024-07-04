@@ -1,6 +1,5 @@
 package com.deopraglabs.egrade.view;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,20 +26,22 @@ public class StudentActivity extends AppCompatActivity {
 
         student = DataHolder.getInstance().getStudent();
 
-        replaceFragment(new StudentHomeFragment());
+        replaceFragment(new RankingFragment());
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
-            if (item.getItemId() == R.id.student_professors) {
-                selectedFragment = new StudentProfessorFragment();
+            DataHolder.getInstance().setStudent(student);
+
+            if (item.getItemId() == R.id.student_solicitations) {
+                selectedFragment = new StudentSolicitationsFragment();
             } else if (item.getItemId() == R.id.student_grades) {
                 selectedFragment = new StudentGradeFragment();
             } else if (item.getItemId() == R.id.student_profile) {
                 selectedFragment = new StudentProfileFragment();
             } else {
-                selectedFragment = new StudentHomeFragment();
+                selectedFragment = new RankingFragment();
             }
 
             replaceFragment(selectedFragment);
@@ -49,10 +50,7 @@ public class StudentActivity extends AppCompatActivity {
     }
 
     private void replaceFragment(Fragment fragment) {
-        Bundle args = new Bundle();
-        args.putSerializable("user", student);
-        fragment.setArguments(args);
-
+        DataHolder.setStudent(student);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

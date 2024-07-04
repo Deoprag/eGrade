@@ -27,6 +27,9 @@ import java.util.List;
 
 public class CoordinatorCourseActivity extends AppCompatActivity {
 
+    private static final int EDIT_COURSE_REQUEST = 1;
+    private static final int ADD_COURSE_REQUEST = 2;
+
     private RecyclerView recyclerView;
     private Coordinator coordinator;
     private List<Course> courseList;
@@ -44,7 +47,7 @@ public class CoordinatorCourseActivity extends AppCompatActivity {
             Intent intent = new Intent(CoordinatorCourseActivity.this, EditCourseActivity.class);
             DataHolder.getInstance().setCourse(course);
             DataHolder.getInstance().setCoordinator(coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_COURSE_REQUEST);
         });
 
         recyclerView = findViewById(R.id.recyclerViewCourses);
@@ -56,7 +59,7 @@ public class CoordinatorCourseActivity extends AppCompatActivity {
             Intent intent = new Intent(CoordinatorCourseActivity.this, EditCourseActivity.class);
             DataHolder.getInstance().setCourse(null);
             DataHolder.getInstance().setCoordinator(coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_COURSE_REQUEST);
         });
 
         loadCourses();
@@ -88,5 +91,13 @@ public class CoordinatorCourseActivity extends AppCompatActivity {
                 Log.e("Erro", error);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == EDIT_COURSE_REQUEST || requestCode == ADD_COURSE_REQUEST) && resultCode == RESULT_OK) {
+            loadCourses();
+        }
     }
 }

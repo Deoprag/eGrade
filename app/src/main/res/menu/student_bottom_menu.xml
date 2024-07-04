@@ -7,18 +7,13 @@
         android:icon="@drawable/home_24"/>
 
     <item
-        android:id="@+id/student_professors"
-        android:title="Professores"
+        android:id="@+id/student_grades"
+        android:title="Matérias"
         android:icon="@drawable/people_24"/>
 
     <item
-        android:id="@+id/fab"
-        android:title=""
-        android:enabled="false"/>
-
-    <item
-        android:id="@+id/student_grades"
-        android:title="Matérias"
+        android:id="@+id/student_solicitations"
+        android:title="Solicitações"
         android:icon="@drawable/book_24"/>
 
     <item

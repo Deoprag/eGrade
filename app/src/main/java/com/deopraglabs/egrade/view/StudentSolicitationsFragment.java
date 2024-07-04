@@ -10,30 +10,21 @@ import android.view.ViewGroup;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.DataHolder;
 
-public class StudentProfessorFragment extends Fragment {
+public class StudentSolicitationsFragment extends Fragment {
 
     private Student student;
-
-    public static StudentProfileFragment newInstance(Student student) {
-        StudentProfileFragment fragment = new StudentProfileFragment();
-        Bundle args = new Bundle();
-        args.putSerializable("user", student);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            student = (Student) getArguments().getSerializable("user");
-        }
+        student = DataHolder.getInstance().getStudent();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_student_professor, container, false);
+        return inflater.inflate(R.layout.fragment_student_solicitation, container, false);
     }
 }

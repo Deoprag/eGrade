@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StudentHomeFragment extends Fragment {
+public class RankingFragment extends Fragment {
 
     private RecyclerView rankingRecyclerView;
     private RankingAdapter rankingAdapter;
@@ -42,7 +42,7 @@ public class StudentHomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_student_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_ranking, container, false);
 
         rankingRecyclerView = view.findViewById(R.id.rankingRecyclerView);
         subjectSpinner = view.findViewById(R.id.subjectSpinner);
@@ -93,7 +93,7 @@ public class StudentHomeFragment extends Fragment {
                 Log.d("Resposta Matéria", response);
                 Gson gson = new Gson();
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
-                synchronized (StudentHomeFragment.this) {
+                synchronized (RankingFragment.this) {
                     List<Subject> subjects = gson.fromJson(response, subjectListType);
                     if (subjects != null) {
                         subjectsList.clear();
@@ -101,7 +101,7 @@ public class StudentHomeFragment extends Fragment {
                     } else {
                         Log.e("Erro", "Lista de matérias retornada é nula");
                     }
-                    StudentHomeFragment.this.notifyAll();
+                    RankingFragment.this.notifyAll();
                 }
             }
 
@@ -143,9 +143,9 @@ public class StudentHomeFragment extends Fragment {
                 Log.d("Resposta", response);
                 Gson gson = new Gson();
                 Type gradeListType = new TypeToken<List<Grade>>() {}.getType();
-                synchronized (StudentHomeFragment.this) {
+                synchronized (RankingFragment.this) {
                     gradesList = gson.fromJson(response, gradeListType);
-                    StudentHomeFragment.this.notifyAll();
+                    RankingFragment.this.notifyAll();
                 }
             }
 

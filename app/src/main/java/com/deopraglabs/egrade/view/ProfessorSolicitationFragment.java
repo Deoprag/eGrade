@@ -10,25 +10,16 @@ import android.view.ViewGroup;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class ProfessorSolicitationFragment extends Fragment {
 
     private Professor professor;
 
-    public static ProfessorSolicitationFragment newInstance(Professor professor) {
-        ProfessorSolicitationFragment fragment = new ProfessorSolicitationFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            professor = (Professor) getArguments().getSerializable("user");
-        }
+        professor = DataHolder.getInstance().getProfessor();
     }
 
     @Override

@@ -30,6 +30,9 @@ import java.util.List;
 
 public class CoordinatorProfessorsActivity extends AppCompatActivity {
 
+    private static final int EDIT_PROFESSOR_REQUEST = 1;
+    private static final int ADD_PROFESSOR_REQUEST = 2;
+
     private Coordinator coordinator;
     private RecyclerView recyclerView;
     private ProfessorAdapter adapter;
@@ -51,7 +54,7 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
             Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
             DataHolder.getInstance().setProfessor(professor);
             DataHolder.getInstance().setCoordinator(coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_PROFESSOR_REQUEST);
         });
 
         loadProfessors();
@@ -67,7 +70,7 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
                 Intent intent = new Intent(CoordinatorProfessorsActivity.this, EditProfessorActivity.class);
                 DataHolder.getInstance().setProfessor(null);
                 DataHolder.getInstance().setCoordinator(coordinator);
-                startActivity(intent);
+                startActivityForResult(intent, ADD_PROFESSOR_REQUEST);
             }
         });
 
@@ -105,7 +108,7 @@ public class CoordinatorProfessorsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK) {
+        if ((requestCode == EDIT_PROFESSOR_REQUEST || requestCode == ADD_PROFESSOR_REQUEST) && resultCode == RESULT_OK) {
             loadProfessors();
         }
     }

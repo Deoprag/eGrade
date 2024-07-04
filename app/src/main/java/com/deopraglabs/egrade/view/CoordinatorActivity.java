@@ -28,11 +28,14 @@ public class CoordinatorActivity extends AppCompatActivity {
 
         coordinator = DataHolder.getInstance().getCoordinator();
 
-        replaceFragment(new CoordinatorHomeFragment());
+        replaceFragment(new RankingFragment());
+        binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
+
             DataHolder.getInstance().setCoordinator(coordinator);
+
             if (item.getItemId() == R.id.coordinator_register_people) {
                 selectedFragment = new CoordinatorRegisterPeopleFragment();
             } else if (item.getItemId() == R.id.coordinator_profile) {
@@ -40,7 +43,7 @@ public class CoordinatorActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.coordinator_register_other) {
                 selectedFragment = new CoordinatorRegisterOtherFragment();
             } else {
-                selectedFragment = new CoordinatorHomeFragment();
+                selectedFragment = new RankingFragment();
             }
 
             replaceFragment(selectedFragment);

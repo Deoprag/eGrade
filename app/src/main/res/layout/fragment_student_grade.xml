@@ -1,42 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="2dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/pink"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:text="Matérias"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF" />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/gradeList"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gradeRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="#DDDDDD"
-        android:dividerHeight="1dp" />
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"/>
 
-    </LinearLayout>
-</HorizontalScrollView>
+</RelativeLayout>

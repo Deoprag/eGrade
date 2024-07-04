@@ -9,25 +9,16 @@ import androidx.fragment.app.Fragment;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Professor;
+import com.deopraglabs.egrade.util.DataHolder;
 
 public class ProfessorGradeFragment extends Fragment {
 
     private Professor professor;
 
-    public static ProfessorGradeFragment newInstance(Professor professor) {
-        ProfessorGradeFragment fragment = new ProfessorGradeFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            professor = (Professor) getArguments().getSerializable("user");
-        }
+        professor = DataHolder.getInstance().getProfessor();
     }
 
     @Override

@@ -178,9 +178,8 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso deletado com sucesso!", Toast.LENGTH_LONG).show();
-                    synchronized (getParent()){
-                        notifyAll();
-                    }
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
                     finish();
                 });
             }
@@ -244,9 +243,8 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso cadastrado com sucesso!", Toast.LENGTH_LONG).show();
-                    synchronized (getParent()){
-                        notifyAll();
-                    }
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
                     finish();
                 });
             }
@@ -282,9 +280,8 @@ public class EditCourseActivity extends AppCompatActivity {
                 Log.d("Response", response);
                 runOnUiThread(() -> {
                     Toast.makeText(getApplicationContext(), "Curso atualizado com sucesso!", Toast.LENGTH_LONG).show();
-                    synchronized (getParent()){
-                        notifyAll();
-                    }
+                    DataHolder.getInstance().setCoordinator(coordinator);
+                    setResult(RESULT_OK);
                     finish();
                 });
             }

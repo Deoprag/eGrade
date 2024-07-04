@@ -28,6 +28,9 @@ import java.util.List;
 
 public class CoordinatorSubjectsActivity extends AppCompatActivity {
 
+    private static final int EDIT_SUBJECT_REQUEST = 1;
+    private static final int ADD_SUBJECT_REQUEST = 2;
+
     private Coordinator coordinator;
     private RecyclerView recyclerView;
     private SubjectAdapter adapter;
@@ -48,7 +51,7 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
             Intent intent = new Intent(CoordinatorSubjectsActivity.this, EditSubjectActivity.class);
             DataHolder.getInstance().setSubject(subject);
             DataHolder.getInstance().setCoordinator(coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_SUBJECT_REQUEST);
         });
 
         loadSubjects();
@@ -62,7 +65,7 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
             Intent intent = new Intent(CoordinatorSubjectsActivity.this, EditSubjectActivity.class);
             DataHolder.getInstance().setSubject(null);
             DataHolder.getInstance().setCoordinator(coordinator);
-            startActivity(intent);
+            startActivityForResult(intent, ADD_SUBJECT_REQUEST);
         });
     }
 
@@ -93,5 +96,13 @@ public class CoordinatorSubjectsActivity extends AppCompatActivity {
                 Log.e("Erro", error);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((requestCode == EDIT_SUBJECT_REQUEST || requestCode == ADD_SUBJECT_REQUEST) && resultCode == RESULT_OK) {
+            loadSubjects();
+        }
     }
 }

@@ -24,23 +24,24 @@ public class ProfessorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityProfessorBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         professor = DataHolder.getInstance().getProfessor();
 
-        replaceFragment(new ProfessorHomeFragment());
+        replaceFragment(new RankingFragment());
         binding.bottomNavigationView.setBackground(null);
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment;
 
+            DataHolder.getInstance().setProfessor(professor);
+
             if (item.getItemId() == R.id.professor_solicitations) {
-                selectedFragment = ProfessorSolicitationFragment.newInstance(professor);
+                selectedFragment = new ProfessorSolicitationFragment();
             } else if (item.getItemId() == R.id.professor_grades) {
-                selectedFragment = ProfessorGradeFragment.newInstance(professor);
+                selectedFragment = new ProfessorGradeFragment();
             } else if (item.getItemId() == R.id.professor_profile) {
-                selectedFragment = ProfessorProfileFragment.newInstance(professor);
+                selectedFragment = new ProfessorProfileFragment();
             } else {
-                selectedFragment = new ProfessorHomeFragment();
+                selectedFragment = new RankingFragment();
             }
 
             replaceFragment(selectedFragment);

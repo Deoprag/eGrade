@@ -20,5 +20,4 @@
         android:id="@+id/coordinator_profile"
         android:title="Perfil"
         android:icon="@drawable/user_24"/>
-
 </menu>
