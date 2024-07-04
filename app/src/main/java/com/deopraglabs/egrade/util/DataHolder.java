@@ -5,6 +5,7 @@ import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
 import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.model.Grade;
 import com.deopraglabs.egrade.model.Subject;
 
 import lombok.Getter;
@@ -20,6 +21,9 @@ public class DataHolder {
     @Getter
     @Setter
     private static Course course;
+    @Getter
+    @Setter
+    private static Grade grade;
     @Getter
     @Setter
     private static Subject subject;

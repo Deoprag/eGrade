@@ -53,10 +53,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         holder.descriptionTextView.setText(course.getDescription());
         holder.coordinatorTextView.setText(course.getCoordinator().getName());
         holder.editButton.setOnClickListener(v -> onItemClickListener.onItemClick(course));
-        for (Subject subject: course.getSubjects()) {
-            sb.append(subject.getName()).append(", ");
-        }
+        if (!course.getSubjects().isEmpty()) {
+            for (Subject subject: course.getSubjects()) {
+                sb.append(subject.getName()).append(", ");
+            }
         holder.subjectsTextView.setText("Matérias: " + sb.substring(0, sb.length() - 2));
+        }
     }
 
     @Override

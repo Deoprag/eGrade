@@ -381,7 +381,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "email", emailEditText.getText().toString(),
                 "phoneNumber", phoneEditText.getText().toString().replaceAll("[() -]", ""),
                 "birthDate", birthDateEditText.getText().toString(),
-                "password", passwordEditText.getText().toString(),
+                "password", passwordEditText.getText().toString()   ,
                 "active", Boolean.toString(activeCheckBox.isChecked()),
                 "subjects",
                 "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null

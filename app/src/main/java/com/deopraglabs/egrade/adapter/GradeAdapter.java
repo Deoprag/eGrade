@@ -41,35 +41,37 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
     public void onBindViewHolder(@NonNull GradeViewHolder holder, int position) {
         Grade grade = gradeList.get(position);
         student = DataHolder.getInstance().getStudent();
-        float media = (grade.getN1() + grade.getN2()) / 2;
-        float faltas = 0f;
-        float presenca = 0f;
+        if (student != null) {
+            float media = (grade.getN1() + grade.getN2()) / 2;
+            float faltas = 0f;
+            float presenca = 0f;
 
-        if (student.getAttendances() != null && !student.getAttendances().isEmpty()) {
-            for (Attendance attendance: student.getAttendances()) {
-                if (attendance.getSubject().equals(grade.getSubject())) {
-                    if (attendance.isPresent()) {
-                        presenca++;
-                    } else {
-                        faltas++;
+            if (student.getAttendances() != null && !student.getAttendances().isEmpty()) {
+                for (Attendance attendance: student.getAttendances()) {
+                    if (attendance.getSubject().equals(grade.getSubject())) {
+                        if (attendance.isPresent()) {
+                            presenca++;
+                        } else {
+                            faltas++;
+                        }
                     }
                 }
             }
+
+            float totalAulas = presenca + faltas;
+            float porcentagemPresenca = (totalAulas > 0) ? (presenca / totalAulas) * 100 : 100;
+
+            boolean aprovado = media > 6f && porcentagemPresenca > 75f;
+
+            holder.textViewSubject.setText(grade.getSubject().getName());
+            holder.textViewProfessor.setText("Professor: " + grade.getSubject().getProfessor().getName());
+            holder.textViewAbsence.setText("Presença: " + String.format("%.1f", porcentagemPresenca) + "%");
+            holder.textViewGrade.setText(String.format("Nota: %.1f", media));
+            holder.textViewSituation.setText("Situação: " + (aprovado ? "Aprovado" : "Reprovado"));
+            holder.cardView.setCardBackgroundColor(aprovado
+                ? ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_green_dark)
+                : ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_red_dark));
         }
-
-        float totalAulas = presenca + faltas;
-        float porcentagemPresenca = (totalAulas > 0) ? (presenca / totalAulas) * 100 : 100;
-
-        boolean aprovado = media > 6f && porcentagemPresenca > 75f;
-
-        holder.textViewSubject.setText(grade.getSubject().getName());
-        holder.textViewProfessor.setText("Professor: " + grade.getSubject().getProfessor().getName());
-        holder.textViewAbsence.setText("Presença: " + String.format("%.1f", porcentagemPresenca) + "%");
-        holder.textViewGrade.setText(String.format("Nota: %.1f", media));
-        holder.textViewSituation.setText("Situação: " + (aprovado ? "Aprovado" : "Reprovado"));
-        holder.cardView.setCardBackgroundColor(aprovado
-            ? ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_green_dark)
-            : ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_red_dark));
     }
 
 

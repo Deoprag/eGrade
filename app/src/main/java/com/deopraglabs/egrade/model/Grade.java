@@ -3,10 +3,12 @@ package com.deopraglabs.egrade.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Grade implements Serializable {
@@ -15,8 +17,8 @@ public class Grade implements Serializable {
     private long id;
     private float n1;
     private float n2;
-    private byte[] test1;
-    private byte[] test2;
+    private String test1;
+    private String test2;
     private Student student;
     private Subject subject;
 }
