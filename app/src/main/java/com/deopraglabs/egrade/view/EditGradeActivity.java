@@ -5,8 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,10 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Grade;
+import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
+import com.deopraglabs.egrade.util.HttpUtil;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.IOException;
@@ -42,12 +43,13 @@ public class EditGradeActivity extends AppCompatActivity {
     private Button buttonUploadTest2;
     private Button buttonViewTest1;
     private Button buttonViewTest2;
+    private Button buttonSave;
 
     private Bitmap selectedTest1;
     private Bitmap selectedTest2;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_grade);
 
@@ -68,6 +70,7 @@ public class EditGradeActivity extends AppCompatActivity {
         buttonUploadTest2 = findViewById(R.id.buttonUploadTest2);
         buttonViewTest1 = findViewById(R.id.buttonViewTest1);
         buttonViewTest2 = findViewById(R.id.buttonViewTest2);
+        buttonSave = findViewById(R.id.buttonSave);
 
         grade = findGradeForSubject(student, subject);
         if (grade == null) {
@@ -102,6 +105,8 @@ public class EditGradeActivity extends AppCompatActivity {
                 Toast.makeText(EditGradeActivity.this, "Teste 2 não disponível", Toast.LENGTH_SHORT).show();
             }
         });
+
+        buttonSave.setOnClickListener(v -> chooseSave());
     }
 
     private Grade findGradeForSubject(Student student, Subject subject) {
@@ -149,6 +154,75 @@ public class EditGradeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Erro ao selecionar imagem", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void chooseSave() {
+        if (grade.getId() > 0) {
+            updateGrade();
+        } else {
+            saveGrade();
+        }
+    }
+
+    private void updateGrade() {
+        final String url = EGradeUtil.URL + "/api/v1/grade/update";
+        final String body = HttpUtil.generateRequestBody(
+                "id", String.valueOf(grade.getId()),
+                "n1", editTextN1.getText().toString(),
+                "n2", editTextN2.getText().toString(),
+                "test1", selectedTest1 != null ? EGradeUtil.bitmapToBase64(selectedTest1) : null,
+                "test2", selectedTest2 != null ? EGradeUtil.bitmapToBase64(selectedTest2) : null,
+                "student_id", String.valueOf(student.getId()),
+                "subject_id", String.valueOf(subject.getId())
+        );
+
+        HttpUtil.sendRequest(url, Method.PUT, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Notas salvas com sucesso!", Toast.LENGTH_LONG).show();
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
+    }
+
+    private void saveGrade() {
+        final String url = EGradeUtil.URL + "/api/v1/grade/save";
+        final String body = HttpUtil.generateRequestBody(
+                "n1", editTextN1.getText().toString(),
+                "n2", editTextN2.getText().toString(),
+                "test1", selectedTest1 != null ? EGradeUtil.bitmapToBase64(selectedTest1) : null,
+                "test2", selectedTest2 != null ? EGradeUtil.bitmapToBase64(selectedTest2) : null,
+                "student_id", String.valueOf(student.getId()),
+                "subject_id", String.valueOf(subject.getId())
+        );
+
+        HttpUtil.sendRequest(url, Method.POST, body, new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Notas salvas com sucesso!", Toast.LENGTH_LONG).show();
+                    setResult(RESULT_OK);
+                    finish();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
+                Log.e("Erro", error);
+            }
+        });
     }
 
     private void showImageDialog(Bitmap bitmap) {

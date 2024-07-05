@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="@color/holo_purple_dark"
+        app:cardBackgroundColor="@color/holo_blue_dark"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp">
 
@@ -52,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nenhuma imagem selecionada"
+                android:textSize="16sp"
                 android:textColor="@android:color/white"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"/>
@@ -62,8 +63,9 @@
                 android:layout_height="wrap_content"
                 android:text="Anexar Prova"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/pink"
-                android:textColor="@android:color/white"/>
+                android:backgroundTint="@color/holo_yellow_dark"
+                android:textColor="@android:color/white"
+                android:drawableLeft="@drawable/ic_attach_file"/>
 
             <Button
                 android:id="@+id/buttonViewTest1"
@@ -72,7 +74,8 @@
                 android:text="Visualizar"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/holo_green_dark"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:drawableLeft="@drawable/ic_visibility"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -81,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:cardBackgroundColor="@color/holo_purple_dark"
+        app:cardBackgroundColor="@color/holo_blue_dark"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp">
 
@@ -120,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nenhuma imagem selecionada"
+                android:textSize="16sp"
                 android:textColor="@android:color/white"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"/>
@@ -130,8 +134,9 @@
                 android:layout_height="wrap_content"
                 android:text="Anexar Prova"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="@color/pink"
-                android:textColor="@android:color/white"/>
+                android:backgroundTint="@color/holo_yellow_dark"
+                android:textColor="@android:color/white"
+                android:drawableLeft="@drawable/ic_attach_file"/>
 
             <Button
                 android:id="@+id/buttonViewTest2"
@@ -140,9 +145,18 @@
                 android:text="Visualizar"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/holo_green_dark"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:drawableLeft="@drawable/ic_visibility"/>
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Salvar"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/pink"
+        android:textColor="@android:color/white"/>
 </LinearLayout>
