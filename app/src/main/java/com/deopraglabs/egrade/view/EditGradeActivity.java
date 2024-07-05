@@ -1,7 +1,10 @@
 package com.deopraglabs.egrade.view;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +21,14 @@ import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
+import com.github.chrisbanes.photoview.PhotoView;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class EditGradeActivity extends AppCompatActivity {
+
+    private static final int REQUEST_CODE_SELECT_IMAGE1 = 1;
+    private static final int REQUEST_CODE_SELECT_IMAGE2 = 2;
 
     private Student student;
     private Subject subject;
@@ -31,15 +36,21 @@ public class EditGradeActivity extends AppCompatActivity {
 
     private EditText editTextN1;
     private EditText editTextN2;
-    private Button buttonDownloadTest1;
-    private Button buttonDownloadTest2;
+    private TextView textViewTest1Status;
+    private TextView textViewTest2Status;
+    private Button buttonUploadTest1;
+    private Button buttonUploadTest2;
+    private Button buttonViewTest1;
+    private Button buttonViewTest2;
+
+    private Bitmap selectedTest1;
+    private Bitmap selectedTest2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_grade);
 
-        // Obter student e subject da DataHolder
         student = DataHolder.getInstance().getStudent();
         subject = DataHolder.getInstance().getSubject();
 
@@ -51,10 +62,13 @@ public class EditGradeActivity extends AppCompatActivity {
 
         editTextN1 = findViewById(R.id.editTextN1);
         editTextN2 = findViewById(R.id.editTextN2);
-        buttonDownloadTest1 = findViewById(R.id.buttonDownloadTest1);
-        buttonDownloadTest2 = findViewById(R.id.buttonDownloadTest2);
+        textViewTest1Status = findViewById(R.id.textViewTest1Status);
+        textViewTest2Status = findViewById(R.id.textViewTest2Status);
+        buttonUploadTest1 = findViewById(R.id.buttonUploadTest1);
+        buttonUploadTest2 = findViewById(R.id.buttonUploadTest2);
+        buttonViewTest1 = findViewById(R.id.buttonViewTest1);
+        buttonViewTest2 = findViewById(R.id.buttonViewTest2);
 
-        // Verificar se o aluno já possui notas para a matéria
         grade = findGradeForSubject(student, subject);
         if (grade == null) {
             grade = new Grade();
@@ -64,19 +78,26 @@ public class EditGradeActivity extends AppCompatActivity {
             loadGradeData(grade);
         }
 
-        buttonDownloadTest1.setOnClickListener(v -> {
-            if (grade.getTest1() != null) {
+        buttonUploadTest1.setOnClickListener(v -> openGallery(REQUEST_CODE_SELECT_IMAGE1));
+        buttonUploadTest2.setOnClickListener(v -> openGallery(REQUEST_CODE_SELECT_IMAGE2));
+
+        buttonViewTest1.setOnClickListener(v -> {
+            if (selectedTest1 != null) {
+                showImageDialog(selectedTest1);
+            } else if (grade.getTest1() != null) {
                 Bitmap bitmap = EGradeUtil.base64ToBitmap(grade.getTest1());
-                saveBitmapToFile(bitmap, subject.getName() + "_N1.png");
+                showImageDialog(bitmap);
             } else {
                 Toast.makeText(EditGradeActivity.this, "Teste 1 não disponível", Toast.LENGTH_SHORT).show();
             }
         });
 
-        buttonDownloadTest2.setOnClickListener(v -> {
-            if (grade.getTest2() != null) {
+        buttonViewTest2.setOnClickListener(v -> {
+            if (selectedTest2 != null) {
+                showImageDialog(selectedTest2);
+            } else if (grade.getTest2() != null) {
                 Bitmap bitmap = EGradeUtil.base64ToBitmap(grade.getTest2());
-                saveBitmapToFile(bitmap, subject.getName() + "_N2.png");
+                showImageDialog(bitmap);
             } else {
                 Toast.makeText(EditGradeActivity.this, "Teste 2 não disponível", Toast.LENGTH_SHORT).show();
             }
@@ -95,16 +116,46 @@ public class EditGradeActivity extends AppCompatActivity {
     private void loadGradeData(Grade grade) {
         editTextN1.setText(String.valueOf(grade.getN1()));
         editTextN2.setText(String.valueOf(grade.getN2()));
+        if (grade.getTest1() != null) {
+            textViewTest1Status.setText("Imagem anexada");
+        }
+        if (grade.getTest2() != null) {
+            textViewTest2Status.setText("Imagem anexada");
+        }
     }
 
-    private void saveBitmapToFile(Bitmap bitmap, String fileName) {
-        File file = new File(getExternalFilesDir(null), fileName);
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            Toast.makeText(this, "Imagem salva em: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            Toast.makeText(this, "Erro ao salvar imagem", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+    private void openGallery(int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+                if (requestCode == REQUEST_CODE_SELECT_IMAGE1) {
+                    selectedTest1 = bitmap;
+                    textViewTest1Status.setText("Imagem selecionada");
+                    grade.setTest1(EGradeUtil.bitmapToBase64(bitmap));
+                } else if (requestCode == REQUEST_CODE_SELECT_IMAGE2) {
+                    selectedTest2 = bitmap;
+                    textViewTest2Status.setText("Imagem selecionada");
+                    grade.setTest2(EGradeUtil.bitmapToBase64(bitmap));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Erro ao selecionar imagem", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private void showImageDialog(Bitmap bitmap) {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_image_viewer);
+        PhotoView photoView = dialog.findViewById(R.id.photoView);
+        photoView.setImageBitmap(bitmap);
+        dialog.show();
     }
 }

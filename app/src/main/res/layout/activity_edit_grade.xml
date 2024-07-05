@@ -5,17 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".EditGradeActivity">
+    android:padding="24dp"
+    tools:context="view.EditGradeActivity">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         app:cardBackgroundColor="@color/holo_purple_dark"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp">
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,14 +47,33 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/textViewTest1Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nenhuma imagem selecionada"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
             <Button
-                android:id="@+id/buttonDownloadTest1"
+                android:id="@+id/buttonUploadTest1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enviar Prova"
+                android:text="Anexar Prova"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/pink"
                 android:textColor="@android:color/white"/>
+
+            <Button
+                android:id="@+id/buttonViewTest1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Visualizar"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/holo_green_dark"
+                android:textColor="@android:color/white"/>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -63,8 +82,8 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         app:cardBackgroundColor="@color/holo_purple_dark"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp">
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -96,14 +115,33 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/textViewTest2Status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nenhuma imagem selecionada"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"/>
+
             <Button
-                android:id="@+id/buttonDownloadTest2"
+                android:id="@+id/buttonUploadTest2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enviar Prova"
+                android:text="Anexar Prova"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/pink"
                 android:textColor="@android:color/white"/>
+
+            <Button
+                android:id="@+id/buttonViewTest2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Visualizar"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/holo_green_dark"
+                android:textColor="@android:color/white"/>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
