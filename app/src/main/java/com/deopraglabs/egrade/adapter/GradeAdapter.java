@@ -66,11 +66,13 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
             holder.textViewSubject.setText(grade.getSubject().getName());
             holder.textViewProfessor.setText("Professor: " + grade.getSubject().getProfessor().getName());
             holder.textViewAbsence.setText("Presença: " + String.format("%.1f", porcentagemPresenca) + "%");
-            holder.textViewGrade.setText(String.format("Nota: %.1f", media));
-            holder.textViewSituation.setText("Situação: " + (aprovado ? "Aprovado" : "Reprovado"));
-            holder.cardView.setCardBackgroundColor(aprovado
-                ? ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_green_dark)
-                : ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_red_dark));
+            holder.textViewGrade.setText(String.format("Nota Final: %.1f", media));
+            holder.textViewGradeN1.setText(String.format("Nota 1: %.1f", grade.getN1()));
+            holder.textViewGradeN2.setText(String.format("Nota 2: %.1f", grade.getN2()));
+            holder.textViewSituation.setText(aprovado ? "Aprovado" : "Reprovado");
+            holder.textViewSituation.setTextColor(aprovado
+                    ? ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_green)
+                    : ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_red_dark));
         }
     }
 
@@ -82,7 +84,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
 
     public static class GradeViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewSubject, textViewProfessor, textViewAbsence, textViewGrade, textViewSituation;
+        TextView textViewSubject, textViewProfessor, textViewAbsence, textViewGrade, textViewGradeN1, textViewGradeN2, textViewSituation;
         CardView cardView;
 
         public GradeViewHolder(@NonNull View itemView) {
@@ -91,6 +93,8 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
             textViewSubject = itemView.findViewById(R.id.textViewSubject);
             textViewProfessor = itemView.findViewById(R.id.textViewProfessor);
             textViewAbsence = itemView.findViewById(R.id.textViewAbsence);
+            textViewGradeN1 = itemView.findViewById(R.id.textViewGradeN1);
+            textViewGradeN2 = itemView.findViewById(R.id.textViewGradeN2);
             textViewGrade = itemView.findViewById(R.id.textViewGrade);
             textViewSituation = itemView.findViewById(R.id.textViewSituation);
         }
