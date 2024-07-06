@@ -316,7 +316,7 @@ public class EditProfessorActivity extends AppCompatActivity {
     }
 
     private void deleteProfessor() {
-        final String url = EGradeUtil.URL + "/api/v1/professor/delete/" + professor.getId();
+        final String url = EGradeUtil.URL + "/api/v1/professor/delete/" + DataHolder.getInstance().getProfessor().getId();
 
         HttpUtil.sendRequest(url, Method.DELETE, "", new HttpUtil.HttpRequestListener() {
             @Override

@@ -89,7 +89,7 @@ public class ProfessorGradeFragment extends Fragment {
     }
 
     private void loadSubjects() {
-        final String url = EGradeUtil.URL + "/api/v1/subject/findByProfessorId/" + professor.getId();
+        final String url = EGradeUtil.URL + "/api/v1/subject/findByProfessorId/" + DataHolder.getInstance().getProfessor().getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override

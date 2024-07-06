@@ -40,6 +40,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
     @Override
     public void onBindViewHolder(@NonNull GradeViewHolder holder, int position) {
         Grade grade = gradeList.get(position);
+
         student = DataHolder.getInstance().getStudent();
         if (student != null) {
             float media = (grade.getN1() + grade.getN2()) / 2;
@@ -72,7 +73,7 @@ public class GradeAdapter extends RecyclerView.Adapter<GradeAdapter.GradeViewHol
             holder.textViewSituation.setText(aprovado ? "Aprovado" : "Reprovado");
             holder.textViewSituation.setTextColor(aprovado
                     ? ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_green)
-                    : ContextCompat.getColor(holder.cardView.getContext(), R.color.holo_red_dark));
+                    : ContextCompat.getColor(holder.cardView.getContext(), R.color.colorButtonDelete));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,8 @@ import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 
+import java.util.Objects;
+
 public class ProfessorProfileFragment extends Fragment {
 
     private Professor professor;
@@ -23,7 +26,7 @@ public class ProfessorProfileFragment extends Fragment {
     private TextView id, name, birthDate, email, phoneNumber;
     private ImageView profileImage;
 
-    private Button btnEditData;
+    private Button btnEditData, btnSignOut;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,7 @@ public class ProfessorProfileFragment extends Fragment {
         phoneNumber = view.findViewById(R.id.phoneNumber);
         profileImage = view.findViewById(R.id.profileImage);
         btnEditData = view.findViewById(R.id.btnEditData);
+        btnSignOut = view.findViewById(R.id.btnSignOut);
 
         id.setText(String.valueOf(professor.getId()));
         name.setText(professor.getName());
@@ -64,6 +68,11 @@ public class ProfessorProfileFragment extends Fragment {
         if (professor.getProfilePicture() != null) {
             profileImage.setImageBitmap(EGradeUtil.base64ToBitmap(professor.getProfilePicture()));
         }
+
+        btnSignOut.setOnClickListener((v -> {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+            requireActivity().finish();
+        }));
 
         return view;
     }

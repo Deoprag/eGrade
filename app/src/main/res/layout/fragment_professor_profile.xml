@@ -210,5 +210,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSignOut"
+            android:layout_width="160dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="80dp"
+            android:text="Sair"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/holo_red_dark"/>
+
     </LinearLayout>
 </ScrollView>

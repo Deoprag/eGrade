@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.view;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ public class CoordinatorProfileFragment extends Fragment {
     private TextView id, name, birthDate, email, phoneNumber;
     private ImageView profileImage;
 
-    private Button btnEditData;
+    private Button btnEditData, btnSignOut;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class CoordinatorProfileFragment extends Fragment {
         phoneNumber = view.findViewById(R.id.phoneNumber);
         profileImage = view.findViewById(R.id.profileImage);
         btnEditData = view.findViewById(R.id.btnEditData);
+        btnSignOut = view.findViewById(R.id.btnSignOut);
 
         id.setText(String.valueOf(coordinator.getId()));
         name.setText(coordinator.getName());
@@ -64,6 +66,11 @@ public class CoordinatorProfileFragment extends Fragment {
         if (coordinator.getProfilePicture() != null) {
             profileImage.setImageBitmap(EGradeUtil.base64ToBitmap(coordinator.getProfilePicture()));
         }
+
+        btnSignOut.setOnClickListener((v -> {
+            startActivity(new Intent(getActivity(), LoginActivity.class));
+            requireActivity().finish();
+        }));
 
         return view;
     }
