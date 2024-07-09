@@ -14,7 +14,6 @@
         android:layout_gravity="center">
 
         <FrameLayout
-            android:layout_marginTop="150dp"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center">
@@ -146,12 +145,28 @@
             android:prompt="@string/gender_prompt"/>
 
         <Spinner
-            android:id="@+id/subjectSpinner"
+            android:id="@+id/subjectsSpinner"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:prompt="@string/gender_prompt"/>
+            android:prompt="@string/subjects_prompt"/>
+
+        <Button
+            android:id="@+id/addSubjectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adicionar Matéria"
+            android:layout_gravity="center"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/selectedSubjectsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#DDDDDD"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:scrollbars="vertical"/>
 
         <CheckBox
             android:id="@+id/activeCheckBox"

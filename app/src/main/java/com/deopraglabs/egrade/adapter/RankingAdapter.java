@@ -1,16 +1,26 @@
 package com.deopraglabs.egrade.adapter;// RankingAdapter.java
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
 import com.deopraglabs.egrade.model.Grade;
+import com.deopraglabs.egrade.model.Method;
+import com.deopraglabs.egrade.model.Student;
+import com.deopraglabs.egrade.util.EGradeUtil;
+import com.deopraglabs.egrade.util.HttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingViewHolder> {
@@ -31,9 +41,41 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.RankingV
     @Override
     public void onBindViewHolder(@NonNull RankingViewHolder holder, int position) {
         Grade grade = gradesList.get(position);
-        holder.positionTextView.setText(String.valueOf(position + 1));
-        holder.nameTextView.setText(grade.getStudent().getName());
-        holder.gradeTextView.setText(String.valueOf(grade.getN1()));
+        final String url = EGradeUtil.URL + "/api/v1/student/findByGrade/" + grade.getId();
+        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d("Resposta", response);
+                Gson gson = new Gson();
+                Student student = gson.fromJson(response, Student.class);
+
+                holder.itemView.post(() -> {
+                    holder.positionTextView.setText(String.valueOf(holder.getAdapterPosition() + 1));
+                    holder.nameTextView.setText(student.getName());
+                    holder.gradeTextView.setText(String.format("%.1f",(grade.getN1() + grade.getN2()) / 2));
+
+                    switch (holder.getAdapterPosition()) {
+                        case 0:
+                            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.gold));
+                            break;
+                        case 1:
+                            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.silver));
+                            break;
+                        case 2:
+                            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.bronze));
+                            break;
+                        default:
+                            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(android.R.color.white));
+                            break;
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                Log.e("Erro", error);
+            }
+        });
     }
 
     @Override

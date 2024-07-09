@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,7 +61,7 @@ public class RankingFragment extends Fragment {
 
         populateSubjects();
 
-        ArrayAdapter<Subject> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, subjectsList);
+        ArrayAdapter<Subject> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, subjectsList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         subjectSpinner.setAdapter(adapter);
 
@@ -91,69 +92,79 @@ public class RankingFragment extends Fragment {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta Matéria", response);
-                Gson gson = new Gson();
-                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
-                synchronized (RankingFragment.this) {
+                if (isAdded()) {
+                    Gson gson = new Gson();
+                    Type subjectListType = new TypeToken<List<Subject>>() {
+                    }.getType();
                     List<Subject> subjects = gson.fromJson(response, subjectListType);
                     if (subjects != null) {
                         subjectsList.clear();
                         subjectsList.addAll(subjects);
+                        requireActivity().runOnUiThread(() -> {
+                            ((ArrayAdapter<Subject>) subjectSpinner.getAdapter()).notifyDataSetChanged();
+                        });
                     } else {
                         Log.e("Erro", "Lista de matérias retornada é nula");
                     }
-                    RankingFragment.this.notifyAll();
                 }
             }
 
             @Override
             public void onFailure(String error) {
                 Log.e("Erro", error);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Erro ao carregar matérias", Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
 
     private void updateRanking(@Nullable Subject subject) {
-        List<Grade> filteredGrades = filterGradesBySubject(subject);
-        rankingAdapter.updateGrades(filteredGrades);
+        getAllGrades(() -> {
+            List<Grade> filteredGrades = filterGradesBySubject(subject);
+            requireActivity().runOnUiThread(() -> {
+                rankingAdapter.updateGrades(filteredGrades);
+            });
+        });
     }
 
     private List<Grade> filterGradesBySubject(@Nullable Subject subject) {
-        List<Grade> allGrades = getAllGrades();
-
         if (subject == null || subject.getName().equals("Todas")) {
-            return allGrades.stream()
-                    .sorted((g1, g2) -> Float.compare(g2.getN1(), g1.getN1())) // Ordena por nota, por exemplo
+            return gradesList.stream()
+                    .sorted((g1, g2) -> Float.compare((g2.getN1() + g2.getN2()) / 2, (g1.getN1() + g1.getN2()) / 2))
                     .limit(5)
                     .collect(Collectors.toList());
         }
 
-        return allGrades.stream()
+        return gradesList.stream()
                 .filter(grade -> grade.getSubject().getName().equals(subject.getName()))
-                .sorted((g1, g2) -> Float.compare(g2.getN1(), g1.getN1()))
+                .sorted((g1, g2) -> Float.compare((g2.getN1() + g2.getN2()) / 2, (g1.getN1() + g1.getN2()) / 2))
                 .limit(5)
                 .collect(Collectors.toList());
     }
 
-    private List<Grade> getAllGrades() {
+    private void getAllGrades(Runnable callback) {
         final String url = EGradeUtil.URL + "/api/v1/grade/findAll";
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta", response);
-                Gson gson = new Gson();
-                Type gradeListType = new TypeToken<List<Grade>>() {}.getType();
-                synchronized (RankingFragment.this) {
+                if (isAdded()) {
+                    Gson gson = new Gson();
+                    Type gradeListType = new TypeToken<List<Grade>>() {}.getType();
                     gradesList = gson.fromJson(response, gradeListType);
-                    RankingFragment.this.notifyAll();
+                    callback.run();
                 }
             }
 
             @Override
             public void onFailure(String error) {
                 Log.e("Erro", error);
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(getContext(), "Erro ao carregar notas", Toast.LENGTH_SHORT).show();
+                });
             }
         });
-        return gradesList;
     }
 }

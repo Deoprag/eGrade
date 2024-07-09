@@ -1,6 +1,5 @@
 package com.deopraglabs.egrade.view;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -10,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,32 +21,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.adapter.StudentAdapter;
-import com.deopraglabs.egrade.adapter.StudentGradeAdapter;
+import com.deopraglabs.egrade.adapter.StudentAttendanceAdapter;
+import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
 import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
 import com.deopraglabs.egrade.util.HttpUtil;
-import com.deopraglabs.egrade.model.Method;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
-public class ProfessorGradeFragment extends Fragment {
+public class ProfessorAttendanceFragment extends Fragment {
 
     private Professor professor;
+    private TextView textDate;
     private RecyclerView recyclerView;
-    private StudentGradeAdapter adapter;
+    private StudentAttendanceAdapter adapter;
     private List<Student> studentList;
     private List<Subject> subjectList;
     private Spinner subjectSpinner;
     private Subject selectedSubject;
+    private Button buttonSave;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ public class ProfessorGradeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_professor_grade, container, false);
+        View view = inflater.inflate(R.layout.fragment_professor_attendance, container, false);
 
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
@@ -71,21 +74,21 @@ public class ProfessorGradeFragment extends Fragment {
                 break;
         }
 
+        textDate = view.findViewById(R.id.textDate);
+        textDate.setText("Data: " + EGradeUtil.dateToString(new Date()));
+
         studentList = new ArrayList<>();
         subjectList = new ArrayList<>();
-        adapter = new StudentGradeAdapter(getContext(), studentList, student -> {
-            Intent intent = new Intent(getActivity(), EditGradeActivity.class);
-            DataHolder.getInstance().setStudent(student);
-            DataHolder.getInstance().setSubject(selectedSubject);
-            DataHolder.getInstance().setProfessor(professor);
-            startActivityForResult(intent, 1);
-        });
+        adapter = new StudentAttendanceAdapter(getContext(), studentList);
 
         recyclerView = view.findViewById(R.id.recyclerViewStudents);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 
         subjectSpinner = view.findViewById(R.id.subjectSpinner);
+        buttonSave = view.findViewById(R.id.buttonSave);
+
+        buttonSave.setOnClickListener(v -> saveAttendance());
 
         return view;
     }
@@ -101,13 +104,15 @@ public class ProfessorGradeFragment extends Fragment {
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
                 subjectList = gson.fromJson(response, subjectListType);
 
-                requireActivity().runOnUiThread(() -> {
-                    if (subjectList != null && !subjectList.isEmpty()) {
-                        setupSubjectSpinner();
-                    } else {
-                        Toast.makeText(getContext(), "Nenhuma matéria encontrada", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (subjectList != null && !subjectList.isEmpty()) {
+                            setupSubjectSpinner();
+                        } else {
+                            Toast.makeText(getContext(), "Nenhuma matéria encontrada", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -155,16 +160,17 @@ public class ProfessorGradeFragment extends Fragment {
                 Gson gson = new Gson();
                 Type studentListType = new TypeToken<List<Student>>() {}.getType();
                 List<Student> students = gson.fromJson(response, studentListType);
-
-                requireActivity().runOnUiThread(() -> {
-                    if (students != null) {
-                        studentList.clear();
-                        studentList.addAll(students);
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getContext(), "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (students != null) {
+                            studentList.clear();
+                            studentList.addAll(students);
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getContext(), "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -173,6 +179,15 @@ public class ProfessorGradeFragment extends Fragment {
                 requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erro ao carregar estudantes", Toast.LENGTH_SHORT).show());
             }
         });
+    }
+
+    private void saveAttendance() {
+        Set<Student> selectedStudents = adapter.getSelectedStudents();
+        if (!selectedStudents.isEmpty()) {
+            Toast.makeText(getContext(), "Presença salva com sucesso!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Nenhum aluno selecionado.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

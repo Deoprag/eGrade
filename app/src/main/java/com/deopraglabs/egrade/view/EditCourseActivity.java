@@ -35,7 +35,6 @@ public class EditCourseActivity extends AppCompatActivity {
 
     private Course course;
     private Coordinator coordinator;
-
     private TextView textId;
     private EditText nameEditText, descriptionEditText;
     private Button deleteButton, saveButton;
@@ -131,7 +130,7 @@ public class EditCourseActivity extends AppCompatActivity {
     }
 
     private void loadSubjects() {
-        final String url = EGradeUtil.URL + "/api/v1/subject/findAll/";
+        final String url = EGradeUtil.URL + "/api/v1/subject/findByCoordinatorId/" + DataHolder.getInstance().getCoordinator().getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override

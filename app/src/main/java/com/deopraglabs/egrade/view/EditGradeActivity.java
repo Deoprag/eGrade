@@ -189,8 +189,10 @@ public class EditGradeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
+                    Log.e("Erro", error);
+                });
             }
         });
     }
@@ -219,8 +221,10 @@ public class EditGradeActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(String error) {
-                Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
-                Log.e("Erro", error);
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Erro ao salvar notas! Erro:" + error, Toast.LENGTH_LONG).show();
+                    Log.e("Erro", error);
+                });
             }
         });
     }

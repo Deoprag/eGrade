@@ -25,8 +25,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
+import com.deopraglabs.egrade.adapter.SelectedSubjectsAdapter;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Gender;
 import com.deopraglabs.egrade.model.Method;
@@ -49,18 +52,20 @@ public class EditProfessorActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 2;
 
     private Professor professor;
-
     private Coordinator coordinator;
     private TextView textId;
     private EditText nameEditText, cpfEditText, emailEditText, phoneEditText, birthDateEditText, passwordEditText;
     private ImageView profileImageView;
     private Button deleteButton, saveButton;
     private CheckBox activeCheckBox;
-    private Spinner genderSpinner, subjectSpinner;
+    private Spinner genderSpinner, subjectsSpinner;
+    private RecyclerView selectedSubjectsRecyclerView;
+    private List<Subject> subjects;
+    private List<Subject> selectedSubjects;
+    private SelectedSubjectsAdapter selectedSubjectsAdapter;
+    private ArrayAdapter<Subject> subjectsAdapter;
     private Gender selectedGender;
     private Bitmap selectedPhoto;
-    private List<Subject> subjectList;
-    private Subject selectedSubject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +89,9 @@ public class EditProfessorActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.saveButton);
         activeCheckBox = findViewById(R.id.activeCheckBox);
         genderSpinner = findViewById(R.id.genderSpinner);
-        subjectSpinner = findViewById(R.id.subjectSpinner);
+        subjectsSpinner = findViewById(R.id.subjectsSpinner);
+        selectedSubjectsRecyclerView = findViewById(R.id.selectedSubjectsRecyclerView);
+        Button addSubjectButton = findViewById(R.id.addSubjectButton);
 
         List<String> genderOptions = new ArrayList<>();
         genderOptions.add("Feminino");
@@ -135,6 +142,26 @@ public class EditProfessorActivity extends AppCompatActivity {
             deleteButton.setEnabled(false);
             deleteButton.setVisibility(View.INVISIBLE);
         }
+
+        selectedSubjects = new ArrayList<>();
+        selectedSubjectsAdapter = new SelectedSubjectsAdapter(selectedSubjects, subject -> {
+            selectedSubjects.remove(subject);
+            subjects.add(subject);
+            selectedSubjectsAdapter.notifyDataSetChanged();
+            updateSpinners();
+        });
+
+        selectedSubjectsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        selectedSubjectsRecyclerView.setAdapter(selectedSubjectsAdapter);
+
+        addSubjectButton.setOnClickListener(v -> {
+            Subject selectedSubject = (Subject) subjectsSpinner.getSelectedItem();
+            if (selectedSubject != null && !selectedSubjects.contains(selectedSubject)) {
+                selectedSubjects.add(selectedSubject);
+                subjects.remove(selectedSubject);
+                updateSpinners();
+            }
+        });
 
         profileImageView.setOnClickListener(v -> requestStoragePermission());
 
@@ -261,6 +288,15 @@ public class EditProfessorActivity extends AppCompatActivity {
         profileImageView.setOnClickListener(v -> openImageChooser());
     }
 
+    private void updateSpinners() {
+        subjectsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
+        subjectsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        subjectsSpinner.setAdapter(subjectsAdapter);
+
+        selectedSubjectsAdapter.notifyDataSetChanged();
+        subjectsAdapter.notifyDataSetChanged();
+    }
+
     private void loadSubjects() {
         final String url = EGradeUtil.URL + "/api/v1/subject/findByCoordinatorId/" + DataHolder.getInstance().getCoordinator().getId();
 
@@ -270,9 +306,38 @@ public class EditProfessorActivity extends AppCompatActivity {
                 Log.d("Resposta", response);
                 Gson gson = new Gson();
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
-                subjectList = gson.fromJson(response, subjectListType);
+                subjects = gson.fromJson(response, subjectListType);
 
-                runOnUiThread(() -> setupSubjectSpinner());
+                runOnUiThread(() -> {
+                    if (professor != null) {
+                        final String url = EGradeUtil.URL + "/api/v1/subject/findByProfessorId/" + professor.getId();
+                        HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
+                            @Override
+                            public void onSuccess(String response) {
+                                Log.d("Resposta", response);
+                                Gson gson = new Gson();
+                                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
+                                List<Subject> professorSubjects = gson.fromJson(response, subjectListType);
+
+                                runOnUiThread(() -> {
+                                    if (!professorSubjects.isEmpty()) {
+                                        selectedSubjects.addAll(professorSubjects);
+                                        subjects.removeAll(professorSubjects);
+                                    }
+                                    updateSpinners();
+                                    selectedSubjectsAdapter.notifyDataSetChanged();
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(String error) {
+                                Log.e("Erro", error);
+                            }
+                        });
+                    }
+                    updateSpinners();
+                    selectedSubjectsAdapter.notifyDataSetChanged();
+                });
             }
 
             @Override
@@ -282,32 +347,6 @@ public class EditProfessorActivity extends AppCompatActivity {
         });
     }
 
-    private void setupSubjectSpinner() {
-        if (subjectList == null) {
-            return;
-        }
-
-        List<String> subjectNames = new ArrayList<>();
-        for (Subject subject : subjectList) {
-            subjectNames.add(subject.getName());
-        }
-
-        ArrayAdapter<String> subjectAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, subjectNames);
-        subjectAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        subjectSpinner.setAdapter(subjectAdapter);
-
-        subjectSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedSubject = subjectList.get(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-    }
-    
     private void openImageChooser() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -373,6 +412,14 @@ public class EditProfessorActivity extends AppCompatActivity {
     }
 
     private void registerProfessor() {
+        StringBuilder subjectsIds = new StringBuilder();
+        for (int i = 0; i < selectedSubjects.size(); i++) {
+            subjectsIds.append(selectedSubjects.get(i).getId());
+            if (i < selectedSubjects.size() - 1) {
+                subjectsIds.append(",");
+            }
+        }
+
         final String url = EGradeUtil.URL + "/api/v1/professor/save";
         final String body = HttpUtil.generateRequestBody(
                 "name", nameEditText.getText().toString(),
@@ -383,7 +430,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString()   ,
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "subjects",
+                "subjects", subjectsIds.toString(),
                 "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 
@@ -408,6 +455,13 @@ public class EditProfessorActivity extends AppCompatActivity {
     }
 
     private void updateProfessor() {
+        StringBuilder subjectsIds = new StringBuilder();
+        for (int i = 0; i < selectedSubjects.size(); i++) {
+            subjectsIds.append(selectedSubjects.get(i).getId());
+            if (i < selectedSubjects.size() - 1) {
+                subjectsIds.append(",");
+            }
+        }
         final String url = EGradeUtil.URL + "/api/v1/professor/update";
         final String body = HttpUtil.generateRequestBody(
                 "id", String.valueOf(professor.getId()),
@@ -419,7 +473,7 @@ public class EditProfessorActivity extends AppCompatActivity {
                 "birthDate", birthDateEditText.getText().toString(),
                 "password", passwordEditText.getText().toString(),
                 "active", Boolean.toString(activeCheckBox.isChecked()),
-                "subjects", String.valueOf(selectedSubject.getId()),
+                "subjects", subjectsIds.toString(),
                 "profilePicture", selectedPhoto != null ? EGradeUtil.bitmapToBase64(selectedPhoto) : null
         );
 

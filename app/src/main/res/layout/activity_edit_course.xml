@@ -13,8 +13,6 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
-        <!-- Existing elements -->
-
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -98,7 +96,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:scrollbars="vertical"/>
-
 
         <Button
             android:id="@+id/saveButton"

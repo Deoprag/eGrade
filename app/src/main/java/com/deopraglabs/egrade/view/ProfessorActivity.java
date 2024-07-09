@@ -40,6 +40,8 @@ public class ProfessorActivity extends AppCompatActivity {
                 selectedFragment = new ProfessorGradeFragment();
             } else if (item.getItemId() == R.id.professor_profile) {
                 selectedFragment = new ProfessorProfileFragment();
+            } else if (item.getItemId() == R.id.professor_attendance) {
+                selectedFragment = new ProfessorAttendanceFragment();
             } else {
                 selectedFragment = new RankingFragment();
             }
