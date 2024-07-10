@@ -100,14 +100,16 @@ public class ProfessorGradeFragment extends Fragment {
                 Gson gson = new Gson();
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
                 subjectList = gson.fromJson(response, subjectListType);
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (subjectList != null && !subjectList.isEmpty()) {
+                            setupSubjectSpinner();
+                        } else {
+                            Toast.makeText(getContext(), "Nenhuma matéria encontrada", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
-                requireActivity().runOnUiThread(() -> {
-                    if (subjectList != null && !subjectList.isEmpty()) {
-                        setupSubjectSpinner();
-                    } else {
-                        Toast.makeText(getContext(), "Nenhuma matéria encontrada", Toast.LENGTH_SHORT).show();
-                    }
-                });
             }
 
             @Override
@@ -155,16 +157,17 @@ public class ProfessorGradeFragment extends Fragment {
                 Gson gson = new Gson();
                 Type studentListType = new TypeToken<List<Student>>() {}.getType();
                 List<Student> students = gson.fromJson(response, studentListType);
-
-                requireActivity().runOnUiThread(() -> {
-                    if (students != null) {
-                        studentList.clear();
-                        studentList.addAll(students);
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getContext(), "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (students != null) {
+                            studentList.clear();
+                            studentList.addAll(students);
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getContext(), "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
 
             @Override

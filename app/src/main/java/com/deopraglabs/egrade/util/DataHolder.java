@@ -1,5 +1,6 @@
 package com.deopraglabs.egrade.util;
 
+import com.deopraglabs.egrade.model.Attendance;
 import com.deopraglabs.egrade.model.Certificate;
 import com.deopraglabs.egrade.model.Coordinator;
 import com.deopraglabs.egrade.model.Course;
@@ -18,6 +19,9 @@ public class DataHolder {
     @Getter
     @Setter
     private static Student student;
+    @Getter
+    @Setter
+    private static Attendance attendance;
     @Getter
     @Setter
     private static Course course;

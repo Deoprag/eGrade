@@ -28,8 +28,6 @@
         android:layout_height="wrap_content"
         android:text="Adicionar Coordenador"
         android:drawableLeft="@drawable/add_24"
-        android:padding="12dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:padding="12dp"/>
 
 </LinearLayout>

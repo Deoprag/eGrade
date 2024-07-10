@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,10 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.deopraglabs.egrade.R;
-import com.deopraglabs.egrade.adapter.StudentAttendanceAdapter;
+import com.deopraglabs.egrade.adapter.AttendanceAdapter;
+import com.deopraglabs.egrade.model.Attendance;
 import com.deopraglabs.egrade.model.Method;
 import com.deopraglabs.egrade.model.Professor;
-import com.deopraglabs.egrade.model.Student;
 import com.deopraglabs.egrade.model.Subject;
 import com.deopraglabs.egrade.util.DataHolder;
 import com.deopraglabs.egrade.util.EGradeUtil;
@@ -36,32 +35,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class ProfessorAttendanceFragment extends Fragment {
 
-    private Professor professor;
-    private TextView textDate;
+    private static final int EDIT_ATTENDANCE_REQUEST = 1;
+    private static final int ADD_ATTENDANCE_REQUEST = 2;
+
     private RecyclerView recyclerView;
-    private StudentAttendanceAdapter adapter;
-    private List<Student> studentList;
+    private Professor professor;
+    private AttendanceAdapter adapter;
+    private List<Attendance> attendanceList;
     private List<Subject> subjectList;
     private Spinner subjectSpinner;
     private Subject selectedSubject;
-    private Button buttonSave;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        professor = DataHolder.getInstance().getProfessor();
-        loadSubjects();
-    }
+    private List<Date> attendanceDates = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_professor_attendance, container, false);
+
+        professor = DataHolder.getInstance().getProfessor();
 
         int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (nightModeFlags) {
@@ -74,23 +68,48 @@ public class ProfessorAttendanceFragment extends Fragment {
                 break;
         }
 
-        textDate = view.findViewById(R.id.textDate);
-        textDate.setText("Data: " + EGradeUtil.dateToString(new Date()));
-
-        studentList = new ArrayList<>();
+        attendanceList = new ArrayList<>();
         subjectList = new ArrayList<>();
-        adapter = new StudentAttendanceAdapter(getContext(), studentList);
+        adapter = new AttendanceAdapter(getContext(), attendanceList, attendance -> {
+            Intent intent = new Intent(getActivity(), EditAttendanceActivity.class);
+            DataHolder.getInstance().setAttendance(attendance);
+            DataHolder.getInstance().setSubject(selectedSubject);
+            startActivityForResult(intent, EDIT_ATTENDANCE_REQUEST);
+        });
 
-        recyclerView = view.findViewById(R.id.recyclerViewStudents);
+        subjectSpinner = view.findViewById(R.id.subjectSpinner);
+
+        loadSubjects();
+
+        recyclerView = view.findViewById(R.id.recyclerViewAttendances);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
 
-        subjectSpinner = view.findViewById(R.id.subjectSpinner);
-        buttonSave = view.findViewById(R.id.buttonSave);
-
-        buttonSave.setOnClickListener(v -> saveAttendance());
+        Button addAttendanceButton = view.findViewById(R.id.addAttendanceButton);
+        addAttendanceButton.setOnClickListener(v -> {
+            loadEditAttendance();
+        });
 
         return view;
+    }
+
+    private void loadEditAttendance() {
+        boolean attendanceAlreadyTakenToday = false;
+        for (Attendance attendance : attendanceList) {
+            if (EGradeUtil.isSameDate(new Date(), attendance.getDate())) {
+                attendanceAlreadyTakenToday = true;
+                break;
+            }
+        }
+
+        if (!attendanceAlreadyTakenToday) {
+            Intent intent = new Intent(getActivity(), EditAttendanceActivity.class);
+            DataHolder.getInstance().setAttendance(null);
+            DataHolder.getInstance().setSubject(selectedSubject);
+            startActivityForResult(intent, ADD_ATTENDANCE_REQUEST);
+        } else {
+            Toast.makeText(getContext(), "Chamada já realizada na data de hoje!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadSubjects() {
@@ -103,11 +122,11 @@ public class ProfessorAttendanceFragment extends Fragment {
                 Gson gson = new Gson();
                 Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
                 subjectList = gson.fromJson(response, subjectListType);
-
                 if (isAdded()) {
                     requireActivity().runOnUiThread(() -> {
                         if (subjectList != null && !subjectList.isEmpty()) {
                             setupSubjectSpinner();
+
                         } else {
                             Toast.makeText(getContext(), "Nenhuma matéria encontrada", Toast.LENGTH_SHORT).show();
                         }
@@ -142,7 +161,7 @@ public class ProfessorAttendanceFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedSubject = subjectList.get(position);
-                loadStudentsBySubject(selectedSubject);
+                loadAttendancesBySubject(selectedSubject);
             }
 
             @Override
@@ -150,24 +169,31 @@ public class ProfessorAttendanceFragment extends Fragment {
         });
     }
 
-    private void loadStudentsBySubject(Subject subject) {
-        final String url = EGradeUtil.URL + "/api/v1/student/findAllBySubject/" + subject.getId();
+
+    private void loadAttendancesBySubject(Subject subject) {
+        final String url = EGradeUtil.URL + "/api/v1/attendance/findBySubjectId/" + subject.getId();
 
         HttpUtil.sendRequest(url, Method.GET, "", new HttpUtil.HttpRequestListener() {
             @Override
             public void onSuccess(String response) {
-                Log.d("Response Students", response);
+                Log.d("Resposta Presença", response);
                 Gson gson = new Gson();
-                Type studentListType = new TypeToken<List<Student>>() {}.getType();
-                List<Student> students = gson.fromJson(response, studentListType);
-                if (isAdded()) {
-                    requireActivity().runOnUiThread(() -> {
-                        if (students != null) {
-                            studentList.clear();
-                            studentList.addAll(students);
+                Type attendanceListType = new TypeToken<List<Attendance>>() {}.getType();
+                List<Attendance> attendances = gson.fromJson(response, attendanceListType);
+
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        if (attendances != null) {
+                            attendanceList.clear();
+                            for (Attendance attendance: attendances) {
+                                if (!attendanceDates.contains(attendance.getDate())) {
+                                    attendanceDates.add(attendance.getDate());
+                                    attendanceList.add(attendance);
+                                }
+                            }
                             adapter.notifyDataSetChanged();
                         } else {
-                            Toast.makeText(getContext(), "Nenhum estudante encontrado", Toast.LENGTH_SHORT).show();
+                            Log.e("Erro", "Lista de presenças retornada é nula");
                         }
                     });
                 }
@@ -175,28 +201,16 @@ public class ProfessorAttendanceFragment extends Fragment {
 
             @Override
             public void onFailure(String error) {
-                Log.e("Error", error);
-                requireActivity().runOnUiThread(() -> Toast.makeText(getContext(), "Erro ao carregar estudantes", Toast.LENGTH_SHORT).show());
+                Log.e("Erro", error);
             }
         });
-    }
-
-    private void saveAttendance() {
-        Set<Student> selectedStudents = adapter.getSelectedStudents();
-        if (!selectedStudents.isEmpty()) {
-            Toast.makeText(getContext(), "Presença salva com sucesso!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getContext(), "Nenhum aluno selecionado.", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == -1) {
-                loadSubjects();
-            }
+        if ((requestCode == EDIT_ATTENDANCE_REQUEST || requestCode == ADD_ATTENDANCE_REQUEST) && resultCode == getActivity().RESULT_OK) {
+            loadSubjects();
         }
     }
 }

@@ -55,7 +55,6 @@ public class StudentProfileFragment extends Fragment {
         email = view.findViewById(R.id.email);
         phoneNumber = view.findViewById(R.id.phoneNumber);
         profileImage = view.findViewById(R.id.profileImage);
-        btnEditData = view.findViewById(R.id.btnEditData);
         btnSignOut = view.findViewById(R.id.btnSignOut);
 
         id.setText(String.valueOf(student.getId()));

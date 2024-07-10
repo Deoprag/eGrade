@@ -56,7 +56,7 @@ public class StudentAttendanceAdapter extends RecyclerView.Adapter<StudentAttend
 
     @Override
     public int getItemCount() {
-        return studentList.size();
+        return studentList != null ? studentList.size() : 0;
     }
 
     public static class StudentViewHolder extends RecyclerView.ViewHolder {

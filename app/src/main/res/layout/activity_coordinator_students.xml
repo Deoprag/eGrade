@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/titleTextView"
@@ -29,14 +30,11 @@
         android:layout_weight="1"
         android:scrollbars="vertical"/>
 
-
     <Button
         android:id="@+id/addStudentButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Adicionar Aluno"
         android:drawableLeft="@drawable/add_24"
-        android:padding="12dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:padding="12dp"/>
 </LinearLayout>

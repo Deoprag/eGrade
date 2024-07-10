@@ -92,20 +92,22 @@ public class RankingFragment extends Fragment {
             @Override
             public void onSuccess(String response) {
                 Log.d("Resposta Matéria", response);
-                if (isAdded()) {
-                    Gson gson = new Gson();
-                    Type subjectListType = new TypeToken<List<Subject>>() {
-                    }.getType();
-                    List<Subject> subjects = gson.fromJson(response, subjectListType);
-                    if (subjects != null) {
-                        subjectsList.clear();
+                Gson gson = new Gson();
+                Type subjectListType = new TypeToken<List<Subject>>() {}.getType();
+                List<Subject> subjects = gson.fromJson(response, subjectListType);
+                if (subjects != null) {
+                    subjectsList.clear();
+                    if (isAdded()) {
+                        requireActivity().runOnUiThread(() -> {
+                            ((ArrayAdapter<Subject>) subjectSpinner.getAdapter()).notifyDataSetChanged();
+                        });
                         subjectsList.addAll(subjects);
                         requireActivity().runOnUiThread(() -> {
                             ((ArrayAdapter<Subject>) subjectSpinner.getAdapter()).notifyDataSetChanged();
                         });
-                    } else {
-                        Log.e("Erro", "Lista de matérias retornada é nula");
                     }
+                } else {
+                    Log.e("Erro", "Lista de matérias retornada é nula");
                 }
             }
 
@@ -122,9 +124,11 @@ public class RankingFragment extends Fragment {
     private void updateRanking(@Nullable Subject subject) {
         getAllGrades(() -> {
             List<Grade> filteredGrades = filterGradesBySubject(subject);
-            requireActivity().runOnUiThread(() -> {
-                rankingAdapter.updateGrades(filteredGrades);
-            });
+            if (isAdded()) {
+                requireActivity().runOnUiThread(() -> {
+                    rankingAdapter.updateGrades(filteredGrades);
+                });
+            }
         });
     }
 

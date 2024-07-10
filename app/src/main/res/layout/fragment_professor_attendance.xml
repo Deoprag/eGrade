@@ -1,54 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center_horizontal">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chamada"
-        android:textColor="@color/pink"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"/>
-
-    <TextView
-        android:id="@+id/textDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Data"
-        android:textColor="@color/pink"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"/>
-
-    <Spinner
-        android:id="@+id/subjectSpinner"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewStudents"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Presença"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:textColor="@color/pink" />
 
-    <Button
-        android:id="@+id/buttonSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Salvar"
-        android:background="@color/pink"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:padding="12dp"/>
+        <Spinner
+            android:id="@+id/subjectSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            style="@style/SpinnerStyle" />
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewAttendances"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/addAttendanceButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Realizar chamada"
+            android:drawableLeft="@drawable/add_24"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/pink"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+</ScrollView>

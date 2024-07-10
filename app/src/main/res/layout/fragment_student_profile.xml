@@ -206,42 +206,6 @@
                 android:layout_marginStart="10dp" />
         </LinearLayout>
 
-        <!-- Buttons Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingTop="30dp">
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-            <Button
-                android:id="@+id/btnEditData"
-                android:layout_width="160dp"
-                android:layout_height="60dp"
-                android:text="Editar Dados"
-                android:gravity="center"
-                android:backgroundTint="@color/colorButtonEdit"/>
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/btnSaveData"
-                android:layout_width="160dp"
-                android:layout_height="60dp"
-                android:text="Salvar Dados"
-                android:gravity="center"
-                android:backgroundTint="@color/colorButtonSave"/>
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-        </LinearLayout>
-
         <Button
             android:id="@+id/btnSignOut"
             android:layout_width="160dp"
